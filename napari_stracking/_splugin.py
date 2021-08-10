@@ -81,7 +81,7 @@ class SNapariPlugin(QWidget):
         self.setLayout(layout)
 
         # connect
-        #######self.worker.moveToThread(self.thread)
+        self.worker.moveToThread(self.thread)
         self.thread.started.connect(self.worker.run)
         self.worker.finished.connect(self.thread.quit)
         self.worker.progress.connect(self.log_widget.set_progress)

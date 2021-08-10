@@ -6,7 +6,9 @@
 [![tests](https://github.com/sylvainprigent/napari-stracking/workflows/tests/badge.svg)](https://github.com/sylvainprigent/napari-stracking/actions)
 [![codecov](https://codecov.io/gh/sylvainprigent/napari-stracking/branch/master/graph/badge.svg)](https://codecov.io/gh/sylvainprigent/napari-stracking)
 
-Linking and tracks analysis
+`napari-stracking` is a suite of **Napari** plugins for the [stracking library](
+https://sylvainprigent.github.io/stracking/) dedicated to particles tracking in 2D+t and 3D+t images. Each step of
+the tracking process is separated in independent plugins to ease the creation of pipelines.
 
 ----------------------------------
 

@@ -76,13 +76,23 @@ class STracksFeaturesWidget(SNapariWidget):
         viewer_bar.setLayout(viewer_layout)
         viewer_layout.setContentsMargins(0, 0, 0, 0)
 
+        self._advanced_check = QCheckBox('Advanced')
+        self._advanced_check.stateChanged.connect(self.toggle_advanced)
+
         layout.addWidget(tracks_selector, 0)
+        layout.addWidget(self._advanced_check, 0)
         layout.addWidget(header_widget, 0)
         layout.addWidget(list_widget, 1)
         layout.addWidget(viewer_bar, 0)
         layout.insertSpacing(2, -9)
         filter_frame.setLayout(layout)
         self._on_layer_change(None)
+        self.toggle_advanced(False)
+
+    def toggle_advanced(self, value):
+        """Change the parameters widget to advanced mode"""
+        self.advanced.emit(value)
+        self.is_advanced = value
 
     def _on_layer_change(self, e):
         current_points_text = self._tracks_layer_box.currentText()

@@ -45,6 +45,10 @@ class SSpotPropertiesWidget(SNapariWidget):
         tracks_select_layout.addWidget(self.image_layer_box, 0, 1)
         tracks_select_layout.addWidget(QLabel('Points layer'), 1, 0)
         tracks_select_layout.addWidget(self.points_layer_box, 1, 1)
+
+        self._advanced_check = QCheckBox('Advanced')
+        self._advanced_check.stateChanged.connect(self.toggle_advanced)
+        tracks_select_layout.addWidget(self._advanced_check, 2, 0, 1, 2)
         tracks_select_layout.setContentsMargins(0, 0, 0, 0)
 
         # header widget (add filter from list)
@@ -85,6 +89,12 @@ class SSpotPropertiesWidget(SNapariWidget):
         layout.insertSpacing(2, -9)
         filter_frame.setLayout(layout)
         self._on_layer_change(None)
+        self.toggle_advanced(False)
+
+    def toggle_advanced(self, value):
+        """Change the parameters widget to advanced mode"""
+        self.advanced.emit(value)
+        self.is_advanced = value
 
     def _on_show_properties(self):
         self.properties_viewer.reload()

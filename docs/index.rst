@@ -11,6 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   about
+   guide
+   help
 
 
 Indices and tables

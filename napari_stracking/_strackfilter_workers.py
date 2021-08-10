@@ -25,6 +25,7 @@ class STrackFilterWidget(SNapariWidget):
         self._tracks_layer_box = QComboBox()
         tracks_select_layout.addWidget(QLabel('Tracks layer'))
         tracks_select_layout.addWidget(self._tracks_layer_box)
+
         tracks_select_layout.setContentsMargins(0, 0, 0, 0)
 
         # header widget (add filter from list)
@@ -52,11 +53,20 @@ class STrackFilterWidget(SNapariWidget):
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(tracks_selector)
+        self._advanced_check = QCheckBox('Advanced')
+        self._advanced_check.stateChanged.connect(self.toggle_advanced)
+        layout.addWidget(self._advanced_check)
         layout.addWidget(header_widget)
         layout.addWidget(list_widget)
         layout.insertSpacing(2, -9)
         self.setLayout(layout)
         self._on_layer_change(None)
+        self.toggle_advanced(False)
+
+    def toggle_advanced(self, value):
+        """Change the parameters widget to advanced mode"""
+        self.advanced.emit(value)
+        self.is_advanced = value
 
     def _on_layer_change(self, e):
         current_tracks_text = self._tracks_layer_box.currentText()

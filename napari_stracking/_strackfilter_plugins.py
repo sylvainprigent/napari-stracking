@@ -21,5 +21,5 @@ class SFilterTrack(SNapariPlugin):
         self.widget.advanced.connect(self.set_advanced)
         self.fill_widget_resize = 0
         self.init_ui()
-        self.set_advanced(True)
+        self.set_advanced(False)
 
