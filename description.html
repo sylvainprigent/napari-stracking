@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Guide &#8212; napari-stracking  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="guide">
+<h1>Guide<a class="headerlink" href="#guide" title="Permalink to this headline">¶</a></h1>
+<p>This page aims at guiding the <cite>napari-stracking</cite> user step by step to build a pipeline for particles tracking in 2D+t or
+3D+t images. A classical particles tracking pipeline is made of 5 sequential steps:</p>
+<ol class="arabic simple">
+<li><p>Particles detection frame by frame</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/sdogdetector_res.png"><img alt="_images/sdogdetector_res.png" src="_images/sdogdetector_res.png" style="width: 600px;" /></a>
+<ol class="arabic simple" start="2">
+<li><p>Particles properties calculation (optional)</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/sparticlesproperties_res.png"><img alt="_images/sparticlesproperties_res.png" src="_images/sparticlesproperties_res.png" style="width: 600px;" /></a>
+<ol class="arabic simple" start="3">
+<li><p>Particles linking</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/slinkershortestpath_res.png"><img alt="_images/slinkershortestpath_res.png" src="_images/slinkershortestpath_res.png" style="width: 600px;" /></a>
+<ol class="arabic simple" start="4">
+<li><p>Tracks features extraction (optional)</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/stracksfeatures_res.png"><img alt="_images/stracksfeatures_res.png" src="_images/stracksfeatures_res.png" style="width: 600px;" /></a>
+<ol class="arabic simple" start="5">
+<li><p>Tracks filtering (optional)</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/sfiltertracks_res.png"><img alt="_images/sfiltertracks_res.png" src="_images/sfiltertracks_res.png" style="width: 600px;" /></a>
+<section id="particles-detection">
+<h2>Particles detection<a class="headerlink" href="#particles-detection" title="Permalink to this headline">¶</a></h2>
+<p>The particles detection step is performed frame by frame to independently detect the particles in each time frame. Many
+particles (or spots) detection algorithms have been proposed in the scientific literature. The choice of the most appropriate particles detector should be data
+driven. Furthermore, the performance of a particles detector is sensitive to the image quality. An image denoising
+pre-processing step is sometime needed to improve the particles detection.</p>
+<p>Particles detections plugins availeble in <strong>napari-stracking</strong> are:</p>
+<details>
+<summary><a>S Detector DoG</a></summary><p>The Difference of Gaussian (DoG) detector enhance spots in images by calculated a filtered image which is the difference
+between two versions of the image filtered with a gaussian filter with different sigmas
+[<a class="reference external" href="https://en.wikipedia.org/wiki/Difference_of_Gaussians">wiki DoG</a>].
+The <em>S Detector DoG</em> plugin uses the implementation from <a class="reference external" href="https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_dog">skimage DoG</a></p>
+<p>We start the <em>S Detector DoG</em> by opening <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Detector DoG</em></p>
+<a class="reference internal image-reference" href="_images/sdogdetector.png"><img alt="_images/sdogdetector.png" src="_images/sdogdetector.png" style="width: 600px;" /></a>
+<p>The input is an image layer. If only one image layer is opened in Napari, it is automatically selected. Otherwise,
+we select the image layer we want to process.
+The <em>S Detector DoG</em> plugin has 3 parameters:</p>
+<ol class="arabic simple">
+<li><p><em>Min sigma</em>: is the full width at half max intensity of the smallest particles we want to detect. The unit is the one
+specified in the image layer scale. In our example we set <em>4</em> since the spots are about 4 or 5 pixels width.</p></li>
+<li><p><em>Max sigma</em>: is the maximum width of the spots we want to detect. It is set similarly to <em>Min sigma</em>. In our example
+we set <em>5</em> since the spots are about 4 or 5 pixels width.</p></li>
+<li><p><em>Threshold</em>: is the minimum intensity of the spots (in the DoG filtered image) that are considered as particles of
+interest. This parameter is image dependent and can be chosen by trial and error. In our example, a threshold of
+<em>0.2</em> allows to detect all the particles without false alarm.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/sdogdetector_res.png"><img alt="_images/sdogdetector_res.png" src="_images/sdogdetector_res.png" style="width: 600px;" /></a>
+</details><details>
+<summary><a>S Detector DoH </a></summary><p>The Determinant of Hessian (DoH) detector is a multiscale spot detector that uses the determinant of the hessian matrix
+of the input image
+[<a class="reference external" href="https://en.wikipedia.org/wiki/Blob_detection#The_determinant_of_the_Hessian">wiki DoH</a>].
+The <em>S Detector DoH</em> plugin uses the implementation from <a class="reference external" href="https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_doh">skimage DoH</a></p>
+<p>We start the <em>S Detector DoH</em> by opening <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Detector DoH</em></p>
+<a class="reference internal image-reference" href="_images/sdohdetector.png"><img alt="_images/sdohdetector.png" src="_images/sdohdetector.png" style="width: 600px;" /></a>
+<p>The input is an image layer. If only one image layer is opened in Napari, it is automatically selected. Otherwise,
+we select the image layer we want to process.
+The <em>S Detector DoH</em> plugin has 4 parameters:</p>
+<ol class="arabic simple">
+<li><p><em>Min sigma</em>: is the full width at half max intensity of the smallest particles we want to detect. The unit is the one
+specified in the image layer scale. In our example we set <em>4</em> since the spots are about 4 or 5 pixels width.</p></li>
+<li><p><em>Max sigma</em>: is the maximum width of the spots we want to detect. It is set similarly to <em>Min sigma</em>. In our example
+we set <em>5</em> since the spots are about 4 or 5 pixels width.</p></li>
+<li><p><em>Num sigma</em>: is the number of sigmas used for the multi-scale analysis. In out example we set 2 since the spots are
+almost all the same size.</p></li>
+<li><p><em>Threshold</em>: is the minimum intensity of the spots (in the DoH filtered image) that are considered as particles of
+interest. This parameter is image dependent and can be chosen by trial and error. In our example, a threshold of
+<em>0.01</em> allows to detect all the particles without false alarm.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/sdohdetector_res.png"><img alt="_images/sdohdetector_res.png" src="_images/sdohdetector_res.png" style="width: 600px;" /></a>
+</details><details>
+<summary><a>S Detector LoG </a></summary><p>The Laplacian of Gaussian (LoG) detector is a multi-scale spot detector that uses the laplacian operator on the input
+image filtered with a Gaussian filter to enhance spots. The scale is determined by the size of the Gaussian filter.
+[<a class="reference external" href="https://en.wikipedia.org/wiki/Blob_detection#The_Laplacian_of_Gaussian">wiki LoG</a>].
+The <em>S Detector LoG</em> plugin uses the implementation for <a class="reference external" href="https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log">skimage LoG</a></p>
+<p>To start the <em>S Detector LoG</em> open <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Detector LoG</em></p>
+<a class="reference internal image-reference" href="_images/slogdetector.png"><img alt="_images/slogdetector.png" src="_images/slogdetector.png" style="width: 600px;" /></a>
+<p>The input is an image layer. If only one image layer is opened in Napari, it is automatically selected. Otherwise,
+we select the image layer we want to process.
+The <em>S Detector LoG</em> plugin has 4 parameters:</p>
+<ol class="arabic simple">
+<li><p><em>Min sigma</em>: is the full width at half max intensity of the smallest particles we want to detect. The unit is the one
+specified in the image layer scale. In our example we set <em>4</em> since the spots are about 4 or 5 pixels width.</p></li>
+<li><p><em>Max sigma</em>: is the maximum width of the spots we want to detect. It is set similarly to <em>Min sigma</em>. In our example
+we set <em>5</em> since the spots are about 4 or 5 pixels width.</p></li>
+<li><p><em>Num sigma</em>: is the number of sigmas used for the multi-scale analysis. In out example we set 2 since the spots are
+almost all the same size.</p></li>
+<li><p><em>Threshold</em>: is the minimum intensity of the spots (in the LoG filtered image) that are considered as particles of
+interest. This parameter is image dependent and can be chosen by trial and error. In our example, a threshold of
+<em>0.2</em> allows to detect all the particles without false alarm.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/slogdetector_res.png"><img alt="_images/slogdetector_res.png" src="_images/slogdetector_res.png" style="width: 600px;" /></a>
+</details></section>
+<section id="particles-properties">
+<h2>Particles properties<a class="headerlink" href="#particles-properties" title="Permalink to this headline">¶</a></h2>
+<p>The particles properties plugin allows to calculate properties of each particles (mean intensity for example). This
+step is not mandatory, but can be very useful for the tracks analysis depending on the scientific application. To ease
+the properties calculation, all the properties are grouped in a single plugin called <em>S Particles Properties</em>.</p>
+<p>To open the particles properties plugin, open the plugin: <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Detector DoG</em></p>
+<a class="reference internal image-reference" href="_images/sparticlesproperties.png"><img alt="_images/sparticlesproperties.png" src="_images/sparticlesproperties.png" style="width: 600px;" /></a>
+<p>This plugin needs two inputs:</p>
+<ol class="arabic simple">
+<li><p><em>Image layer</em>: is the layer containing the raw image</p></li>
+<li><p><em>Points layer</em>: is the layer containing the detections (ie. the localisation of particles)</p></li>
+</ol>
+<p>The plugin contains a list of possible features (or properties). To add a feature, we can select it in the list, and
+then click on the <em>Add</em> button. The feature appears in the panel. In this example, we selected the <em>Intensity</em> feature
+that needs one parameter: <em>Radius</em>. It is the radius used to calculate the particles intensity features. In this example
+we then set radius to 2.5 since it is the average radius of our particles. We can then click on <em>Run</em>.</p>
+<p>When the run is finished, there is no new layer in Napari since it is the input points layer that is updated. To
+visualize the particles properties, we click on the <em>particles features</em> button:</p>
+<a class="reference internal image-reference" href="_images/sparticlesproperties_res.png"><img alt="_images/sparticlesproperties_res.png" src="_images/sparticlesproperties_res.png" style="width: 600px;" /></a>
+</section>
+<section id="particles-linking">
+<h2>Particles linking<a class="headerlink" href="#particles-linking" title="Permalink to this headline">¶</a></h2>
+<p>Particles linking is the second main step of a particles tracking pipeline. It goal is to link close particles in
+neighboring time frame to create the tracks. Several strategies have been proposed in the scientific literature to
+perform this task. Available linkers in the stracking plugin suite are:</p>
+<details>
+<summary><a>S Linker Shortest Path </a></summary><p>The <em>S Linker Shortest Path</em> algorithm links the detected particles along the time frame using the following strategy.
+First, a connection graph is created to connect all the neighboring particles of neighboring frames. Then, it
+iteratively estimates the optimal trajectories by applying a shortest path algorithms with a graph pruning strategy. The
+result is a set of trajectories. This tracker cannot handle split/merge events.</p>
+<p>To open the <em>S Linker Shortest Path</em> plugin, open the plugin: <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Linker Shortest Path</em></p>
+<a class="reference internal image-reference" href="_images/slinkershortestpath_res.png"><img alt="_images/slinkershortestpath_res.png" src="_images/slinkershortestpath_res.png" style="width: 600px;" /></a>
+<p>This plugin has one input which is the layer containing the particles detection. The two parameters are:</p>
+<ol class="arabic simple">
+<li><p><em>max distance</em>: is the maximum distance that a particle can move between two consecutive frames. In our example we set
+100 since we are sure that our particles moves less that 100 pixels between two consecutive frames.</p></li>
+<li><p><em>gap</em>: is the number of neighboring frames used to search for a particle connection. In our example we set 1 since
+we do not have missing detection and then want to connect only with the next frame. If we expect having missing
+detections we can set a gap of 2 to enable connecting a particle from frame <em>n</em> to frame <em>n+2</em></p></li>
+</ol>
+<p>We then click, <em>Run</em> and when the processing is finished, we have a new layer with the tracks.</p>
+</details></section>
+<section id="tracks-features">
+<h2>Tracks features<a class="headerlink" href="#tracks-features" title="Permalink to this headline">¶</a></h2>
+<p>The tracks features extraction plugin allows to measure feature of trajectories like length, distance… This
+step is not mandatory, but very useful for the tracks analysis depending on the scientific application. To ease the
+tracks features calculation, all the features are grouped in a single plugin called <em>S Tracks Feature</em>.</p>
+<a class="reference internal image-reference" href="_images/stracksfeatures.png"><img alt="_images/stracksfeatures.png" src="_images/stracksfeatures.png" style="width: 600px;" /></a>
+<p>The input is a Tracks layer that contains the tracking result. Then, the <em>Add feature</em> menu allows to select the
+features we want to extract. In our example we selected the following features:</p>
+<ol class="arabic simple">
+<li><p><em>Length</em> is the number of time points in the track.</p></li>
+<li><p><em>Distance</em> is the full distance that the particles moved (frame by frame).</p></li>
+<li><p><em>Displacement</em> is the distance between the starting point and the ending point of the track.</p></li>
+</ol>
+<p>Clicking <em>Run</em> starts the computation of the features. When the calculation is finished, clicking on the button
+<em>tracks feature</em> allows to visualize the feature:</p>
+<a class="reference internal image-reference" href="_images/stracksfeatures_res.png"><img alt="_images/stracksfeatures_res.png" src="_images/stracksfeatures_res.png" style="width: 600px;" /></a>
+<p>We can see that our 3 trajectories moves horizontally the same displacement, and almost the same distance during 5
+frames.</p>
+</section>
+<section id="tracks-filtering">
+<h2>Tracks filtering<a class="headerlink" href="#tracks-filtering" title="Permalink to this headline">¶</a></h2>
+<p>Particles tracking pipelines are never perfect, and most of the time tracks with no interest are detected by the
+tracking pipeline. For example they can be tracks of not moving object which are not interesting for some scientific
+applications. the <em>S Filter Tracks</em> plugins is a post processing plugin that aims at removing tracks with
+<em>unrealistic</em> properties (false positive).</p>
+<p>To open the <em>S Filter Tracks</em> plugin, open the plugin: <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Filter Tracks</em></p>
+<a class="reference internal image-reference" href="_images/sfiltertracks.png"><img alt="_images/sfiltertracks.png" src="_images/sfiltertracks.png" style="width: 600px;" /></a>
+<p>The input, is the layer containing the tracks. We can then select the features we want to filter with. In our fake
+example we want here to remove the track with a <em>Distance</em> above to 60 pixels. To do so, we select the distance feature
+and set a minimum value of 0, and a maximum value of 60. We then click <em>Run</em>. When it finished we have a new layer with
+only 2 tracks since the tracks with a <em>Distance</em> above to 60 pixels has been removed:</p>
+<a class="reference internal image-reference" href="_images/sfiltertracks_res.png"><img alt="_images/sfiltertracks_res.png" src="_images/sfiltertracks_res.png" style="width: 600px;" /></a>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">napari-stracking</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="help.html">Getting Help</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Sylvain Prigent.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/description.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
