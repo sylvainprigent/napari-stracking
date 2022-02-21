@@ -209,8 +209,6 @@ class SSpotPropertiesWorker(SNapariWorker):
         # set the properties to the layer
         state = self.widget.state()
         input_points_layer_name = state['inputs']['points']
-        self.viewer.layers[input_points_layer_name].properties.update(
-            self._out_data.properties)
-
-        # print(self.viewer.layers[input_points_layer_name].properties)
+        self.viewer.layers[input_points_layer_name].properties = self._out_data.properties
+        #print(self.viewer.layers[input_points_layer_name].properties)
 
