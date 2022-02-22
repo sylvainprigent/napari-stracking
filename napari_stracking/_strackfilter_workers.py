@@ -48,6 +48,7 @@ class STrackFilterWidget(SNapariWidget):
         list_widget.setLayout(list_layout)
         list_widget.setStyleSheet(".QWidget{border: 1px solid #3d4851;}")
         self.pipeline_list_widget = SPipelineListWidget()
+        self.pipeline_list_widget.setMinimumHeight(350)
         list_layout.addWidget(self.pipeline_list_widget)
 
         layout = QVBoxLayout()
