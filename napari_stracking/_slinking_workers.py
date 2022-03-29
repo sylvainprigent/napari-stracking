@@ -193,4 +193,5 @@ class SLinkerShortestPathWorker(SNapariWorker):
             msg.exec_()
         else:
             self.viewer.add_tracks(self._out_data.data,
-                                   name='S Shortest Path Tracks')
+                                   name='S Shortest Path Tracks',
+                                   scale=self._out_data.scale)

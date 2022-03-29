@@ -129,7 +129,7 @@ class SDogWorker(SNapariWorker):
 
         image = self.viewer.layers[input_image_layer].data
         scale = self.viewer.layers[input_image_layer].scale
-        particles = detector.run(image)
+        particles = detector.run(image, scale)
 
         self._out_data = {'data': particles.data, 'scale': scale,
                           'size': max_sigma,
@@ -277,7 +277,7 @@ class SLogWorker(SNapariWorker):
 
         image = self.viewer.layers[input_image_layer].data
         scale = self.viewer.layers[input_image_layer].scale
-        particles = detector.run(image)
+        particles = detector.run(image, scale)
 
         self._out_data = {'data': particles.data, 'scale': scale,
                           'size': max_sigma,
@@ -424,7 +424,7 @@ class SDohWorker(SNapariWorker):
 
         image = self.viewer.layers[input_image_layer].data
         scale = self.viewer.layers[input_image_layer].scale
-        particles = detector.run(image)
+        particles = detector.run(image, scale)
 
         self._out_data = {'data': particles.data, 'scale': scale,
                           'size': max_sigma,

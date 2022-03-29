@@ -13,6 +13,7 @@ from ._slinking_plugins import (SLinkerShortestPath)
 from ._sproperties_plugins import SParticlesProperties
 from ._sfeatures_plugins import STracksFeatures
 from ._strackfilter_plugins import SFilterTrack
+from ._scale_plugin import SScale
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
@@ -23,5 +24,6 @@ def napari_experimental_provide_dock_widget():
             SDetectorLog,
             STracksFeatures,
             SLinkerShortestPath,
-            SFilterTrack
+            SFilterTrack,
+            SScale
             ]
