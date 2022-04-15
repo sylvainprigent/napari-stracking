@@ -7,6 +7,7 @@ from qtpy.QtCore import Signal, QThread, QObject
 
 class SNapariWidget(QWidget):
     advanced = Signal(bool)
+    enable = Signal(bool)
 
     def __init__(self):
         super().__init__()
@@ -61,6 +62,7 @@ class SNapariPlugin(QWidget):
         self.thread = QThread()
 
         # GUI
+        self.run_btn = None
         self.log_widget = SLogWidget()
 
     def init_ui(self):
@@ -72,9 +74,9 @@ class SNapariPlugin(QWidget):
         layout.addWidget(title_label)
         layout.addWidget(self.widget)
 
-        run_btn = QPushButton('Run')
-        run_btn.released.connect(self.run)
-        layout.addWidget(run_btn)
+        self.run_btn = QPushButton('Run')
+        self.run_btn.released.connect(self.run)
+        layout.addWidget(self.run_btn)
 
         layout.addWidget(self.log_widget)
         layout.addWidget(QWidget(), self.fill_widget_resize, QtCore.Qt.AlignTop)
@@ -94,6 +96,10 @@ class SNapariPlugin(QWidget):
 
     def set_advanced(self, mode: bool):
         self.log_widget.set_advanced(mode)
+
+    def set_enable(self, mode: bool):
+        print('plugin set run enabled to:', mode)
+        self.run_btn.setEnabled(mode)
 
     def set_outputs(self):
         self.worker.set_outputs()

@@ -53,13 +53,18 @@ class SDogWidget(SNapariWidget):
         layout.addWidget(self._overlap_label, 6, 0)
         layout.addWidget(self._overlap_value, 6, 1)
         self.setLayout(layout)
-        self._init_layer_list()
+        #self.init_layer_list()
         self.toggle_advanced(False)
 
-    def _init_layer_list(self):
+    def init_layer_list(self):
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.image.image.Image):
                 self._input_layer_box.addItem(layer.name)
+        if self._input_layer_box.count() < 1:
+            print('disable the run button')
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
 
     def _on_layer_change(self, e):
         current_text = self._input_layer_box.currentText()
@@ -72,6 +77,10 @@ class SDogWidget(SNapariWidget):
                 self._input_layer_box.addItem(layer.name)
         if is_current_item_still_here:
             self._input_layer_box.setCurrentText(current_text)
+        if self._input_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
 
     def state(self) -> dict:
         return {'name': 'SDoGDetector',

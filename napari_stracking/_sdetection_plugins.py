@@ -18,7 +18,9 @@ class SDetectorDog(SNapariPlugin):
         self.widget = SDogWidget(napari_viewer)
         self.worker = SDogWorker(napari_viewer, self.widget)
         self.widget.advanced.connect(self.set_advanced)
+        self.widget.enable.connect(self.set_enable)
         self.init_ui()
+        self.widget.init_layer_list()
 
 
 class SDetectorDoh(SNapariPlugin):
@@ -36,6 +38,7 @@ class SDetectorDoh(SNapariPlugin):
         self.widget = SDohWidget(napari_viewer)
         self.worker = SDohWorker(napari_viewer, self.widget)
         self.widget.advanced.connect(self.set_advanced)
+        self.widget.enable.connect(self.set_enable)
         self.init_ui()
 
 
@@ -54,4 +57,5 @@ class SDetectorLog(SNapariPlugin):
         self.widget = SLogWidget(napari_viewer)
         self.worker = SLogWorker(napari_viewer, self.widget)
         self.widget.advanced.connect(self.set_advanced)
+        self.widget.enable.connect(self.set_enable)
         self.init_ui()
