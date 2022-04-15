@@ -123,4 +123,3 @@ class SScale(QWidget):
             current_layer.scale = [float(self.z_res_box.text()), float(self.y_res_box.text()), float(self.x_res_box.text())]
         elif len(current_layer.scale) == 4:
             current_layer.scale = [float(self.t_res_box.text()), float(self.z_res_box.text()), float(self.y_res_box.text()), float(self.x_res_box.text())]
-        
