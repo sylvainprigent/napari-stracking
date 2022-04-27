@@ -79,9 +79,9 @@ class SSpotPropertiesWidget(SNapariWidget):
         # viewer buttons
         viewer_bar = QWidget()
         viewer_layout = QHBoxLayout()
-        properties_btn = QPushButton('particles features')
-        properties_btn.released.connect(self._on_show_properties)
-        viewer_layout.addWidget(properties_btn)
+        self.properties_btn = QPushButton('particles features')
+        self.properties_btn.released.connect(self._on_show_properties)
+        viewer_layout.addWidget(self.properties_btn)
         viewer_bar.setLayout(viewer_layout)
         viewer_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -91,7 +91,6 @@ class SSpotPropertiesWidget(SNapariWidget):
         layout.addWidget(viewer_bar, 0)
         layout.insertSpacing(2, -9)
         filter_frame.setLayout(layout)
-        self._on_layer_change(None)
         self.toggle_advanced(False)
 
     def toggle_advanced(self, value):
@@ -99,9 +98,15 @@ class SSpotPropertiesWidget(SNapariWidget):
         self.advanced.emit(value)
         self.is_advanced = value
 
+    def show_properties(self):
+        self._on_show_properties()
+
     def _on_show_properties(self):
         self.properties_viewer.reload()
         self.properties_viewer.show()
+
+    def init_layer_list(self):
+        self._on_layer_change(False)
 
     def _on_layer_change(self, e):
         current_points_text = self.points_layer_box.currentText()
@@ -122,15 +127,30 @@ class SSpotPropertiesWidget(SNapariWidget):
             self.points_layer_box.setCurrentText(current_points_text)
         if is_current_image_item_still_here:
             self.image_layer_box.setCurrentText(current_image_text)
+        if self.image_layer_box.count() < 1 or self.points_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
+        if self.points_layer_box.count() < 1:
+            self.properties_btn.setEnabled(False)
+        else:
+            self.properties_btn.setEnabled(True)
 
     def _on_add(self):
         filter_ = self.filters_names.currentText()
         if filter_ == 'Intensity':
             self.pipeline_list_widget.add_widget('Intensity',
-                                                 SIntensityPropertyWidget())
+                                                 SIntensityPropertyWidget(self))
 
     def _on_point_layer_change(self, text):
         self.properties_viewer.layer_name = text
+
+    def check_inputs(self):
+        return_state = True
+        for widget in self.pipeline_list_widget.widgets():
+            if not widget.check_inputs():
+                return_state = False
+        return return_state
 
     def state(self) -> dict:
         filters_names = []
@@ -151,8 +171,9 @@ class SSpotPropertiesWidget(SNapariWidget):
 
 
 class SIntensityPropertyWidget(QWidget):
-    def __init__(self):
+    def __init__(self, parent_plugin):
         super().__init__()
+        self.parent_plugin = parent_plugin
         self.layer_name = ''
         self.image_layer_name = ''
 
@@ -163,6 +184,14 @@ class SIntensityPropertyWidget(QWidget):
         self.radius_val = QLineEdit()
         layout.addWidget(radius_label, 1, 0)
         layout.addWidget(self.radius_val, 1, 1)
+
+    def check_inputs(self):
+        try:
+            _ = float(self.radius_val.text())
+        except ValueError as err:
+            self.parent_plugin.show_error(f"Intensity radius input must be a number")
+            return False
+        return True
 
     def parameters(self):
         return {'radius': float(self.radius_val.text())}
@@ -213,5 +242,4 @@ class SSpotPropertiesWorker(SNapariWorker):
         state = self.widget.state()
         input_points_layer_name = state['inputs']['points']
         self.viewer.layers[input_points_layer_name].properties = self._out_data.properties
-        #print(self.viewer.layers[input_points_layer_name].properties)
-
+        self.widget.show_properties()

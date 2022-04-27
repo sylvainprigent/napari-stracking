@@ -165,6 +165,9 @@ class SProcessInListWidget(QWidget):
     def _on_remove(self):
         self.remove.emit(str(self.uuid))
 
+    def check_inputs(self):
+        return self.process_widget.check_inputs()
+
 
 class SPipelineListWidget(QWidget):
     def __init__(self):

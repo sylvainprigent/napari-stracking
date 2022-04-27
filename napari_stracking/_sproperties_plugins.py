@@ -18,7 +18,9 @@ class SParticlesProperties(SNapariPlugin):
         self.widget = SSpotPropertiesWidget(napari_viewer)
         self.worker = SSpotPropertiesWorker(napari_viewer, self.widget)
         self.widget.advanced.connect(self.set_advanced)
+        self.widget.enable.connect(self.set_enable)
         self.fill_widget_resize = 0
         self.init_ui()
+        self.widget.init_layer_list()
         self.set_advanced(False)
 
