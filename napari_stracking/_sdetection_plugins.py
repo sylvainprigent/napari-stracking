@@ -1,6 +1,8 @@
 from ._splugin import SNapariPlugin
-from ._sdetection_workers import (SDogWorker, SDogWidget, SDohWorker,
-                                  SDohWidget, SLogWidget, SLogWorker)
+from ._sdetection_workers import (SDogWorker, SDogWidget,
+                                  SDohWorker, SDohWidget,
+                                  SLogWidget, SLogWorker,
+                                  SSegWidget, SSegWorker)
 
 
 class SDetectorDog(SNapariPlugin):
@@ -40,6 +42,7 @@ class SDetectorDoh(SNapariPlugin):
         self.widget.advanced.connect(self.set_advanced)
         self.widget.enable.connect(self.set_enable)
         self.init_ui()
+        self.widget.init_layer_list()
 
 
 class SDetectorLog(SNapariPlugin):
@@ -59,3 +62,24 @@ class SDetectorLog(SNapariPlugin):
         self.widget.advanced.connect(self.set_advanced)
         self.widget.enable.connect(self.set_enable)
         self.init_ui()
+        self.widget.init_layer_list()
+
+
+class SDetectorSeg(SNapariPlugin):
+    """Dock widget for detection from segmentation map
+
+    Parameters
+    ----------
+    napari_viewer: Viewer
+        Napari viewer
+
+    """
+    def __init__(self, napari_viewer):
+        super().__init__(napari_viewer)
+        self.title = 'S Seg Detector'
+        self.widget = SSegWidget(napari_viewer)
+        self.worker = SSegWorker(napari_viewer, self.widget)
+        self.widget.advanced.connect(self.set_advanced)
+        self.widget.enable.connect(self.set_enable)
+        self.init_ui()
+        self.widget.init_layer_list()

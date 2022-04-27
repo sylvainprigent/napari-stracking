@@ -1,11 +1,12 @@
 from qtpy.QtWidgets import (QWidget, QGridLayout, QLabel, QLineEdit,
                             QComboBox, QCheckBox, QVBoxLayout, QHBoxLayout,
                             QPushButton)
+import numpy as np
 import napari
 from ._splugin import SNapariWorker, SNapariWidget, SProgressObserver
 from ._swidgets import SPropertiesViewer, SPipelineListWidget
 
-from stracking.detectors import (DoGDetector, DoHDetector, LoGDetector)
+from stracking.detectors import (DoGDetector, DoHDetector, LoGDetector, SSegDetector)
 
 
 # ---------------- DoG ----------------
@@ -19,6 +20,8 @@ class SDogWidget(SNapariWidget):
         self._input_layer_box = QComboBox()
         self._advanced_check = QCheckBox('advanced')
         self._advanced_check.stateChanged.connect(self.toggle_advanced)
+
+        self._current_frame_check = QCheckBox('Process only current frame')
 
         self._min_sigma_value = QLineEdit('1')
         self._min_sigma_label = QLabel('Min sigma')
@@ -42,16 +45,17 @@ class SDogWidget(SNapariWidget):
         layout.addWidget(self._input_layer_box, 0, 1)
         layout.addWidget(self._advanced_check, 1, 0, 1, 2)
 
-        layout.addWidget(self._min_sigma_label, 2, 0)
-        layout.addWidget(self._min_sigma_value, 2, 1)
-        layout.addWidget(self._max_sigma_label, 3, 0)
-        layout.addWidget(self._max_sigma_value, 3, 1)
-        layout.addWidget(self._threshold_label, 4, 0)
-        layout.addWidget(self._threshold_value, 4, 1)
-        layout.addWidget(self._sigma_ratio_label, 5, 0)
-        layout.addWidget(self._sigma_ratio_value, 5, 1)
-        layout.addWidget(self._overlap_label, 6, 0)
-        layout.addWidget(self._overlap_value, 6, 1)
+        layout.addWidget(self._current_frame_check, 2, 0, 1, 2)
+        layout.addWidget(self._min_sigma_label, 3, 0)
+        layout.addWidget(self._min_sigma_value, 3, 1)
+        layout.addWidget(self._max_sigma_label, 4, 0)
+        layout.addWidget(self._max_sigma_value, 4, 1)
+        layout.addWidget(self._threshold_label, 5, 0)
+        layout.addWidget(self._threshold_value, 5, 1)
+        layout.addWidget(self._sigma_ratio_label, 6, 0)
+        layout.addWidget(self._sigma_ratio_value, 6, 1)
+        layout.addWidget(self._overlap_label, 7, 0)
+        layout.addWidget(self._overlap_value, 7, 1)
         self.setLayout(layout)
         #self.init_layer_list()
         self.toggle_advanced(False)
@@ -61,7 +65,7 @@ class SDogWidget(SNapariWidget):
             if isinstance(layer, napari.layers.image.image.Image):
                 self._input_layer_box.addItem(layer.name)
         if self._input_layer_box.count() < 1:
-            print('disable the run button')
+            # print('disable the run button')
             self.enable.emit(False)
         else:
             self.enable.emit(True)
@@ -82,6 +86,39 @@ class SDogWidget(SNapariWidget):
         else:
             self.enable.emit(True)
 
+    def check_inputs(self):
+        # Min sigma
+        try:
+            _ = float(self._min_sigma_value.text())
+        except ValueError as err:
+            self.show_error(f"Min Sigma input must be a number")
+            return False
+        # Max sigma
+        try:
+            _ = float(self._max_sigma_value.text())
+        except ValueError as err:
+            self.show_error(f"Max Sigma input must be a number")
+            return False
+        # Threshold value
+        try:
+            _ = float(self._threshold_value.text())
+        except ValueError as err:
+            self.show_error(f"Threshold input must be a number")
+            return False
+        # Sigma ratio
+        try:
+            _ = float(self._sigma_ratio_value.text())
+        except ValueError as err:
+            self.show_error(f"Sigma ratio input must be a number")
+            return False
+        # Overlap value
+        try:
+            _ = float(self._overlap_value.text())
+        except ValueError as err:
+            self.show_error(f"Overlap input must be a number")
+            return False
+        return True
+
     def state(self) -> dict:
         return {'name': 'SDoGDetector',
                 'inputs': {'image': self._input_layer_box.currentText()},
@@ -89,7 +126,8 @@ class SDogWidget(SNapariWidget):
                                'max_sigma': float(self._max_sigma_value.text()),
                                'threshold': float(self._threshold_value.text()),
                                'sigma_ratio': float(self._sigma_ratio_value.text()),
-                               'overlap': float(self._overlap_value.text())
+                               'overlap': float(self._overlap_value.text()),
+                               'current_frame': self._current_frame_check.isChecked()
                                },
                 'outputs': ['points', 'DoG detections']
                 }
@@ -138,7 +176,13 @@ class SDogWorker(SNapariWorker):
 
         image = self.viewer.layers[input_image_layer].data
         scale = self.viewer.layers[input_image_layer].scale
-        particles = detector.run(image, scale)
+
+        if state_params['current_frame']:
+            t = self.viewer.dims.current_step[0]
+            particles = detector.run(np.expand_dims(image[t, ...], 0), scale)
+            particles.data[:, 0] = t
+        else:
+            particles = detector.run(image, scale)
 
         self._out_data = {'data': particles.data, 'scale': scale,
                           'size': max_sigma,
@@ -164,6 +208,8 @@ class SLogWidget(SNapariWidget):
         self._input_layer_box = QComboBox()
         self._advanced_check = QCheckBox('advanced')
         self._advanced_check.stateChanged.connect(self.toggle_advanced)
+
+        self._current_frame_check = QCheckBox('Process only current frame')
 
         self._min_sigma_label = QLabel('Min sigma')
         self._min_sigma_value = QLineEdit('1')
@@ -191,26 +237,32 @@ class SLogWidget(SNapariWidget):
         layout.addWidget(self._input_layer_box, 0, 1)
         layout.addWidget(self._advanced_check, 1, 0, 1, 2)
 
-        layout.addWidget(self._min_sigma_label, 2, 0)
-        layout.addWidget(self._min_sigma_value, 2, 1)
-        layout.addWidget(self._max_sigma_label, 3, 0)
-        layout.addWidget(self._max_sigma_value, 3, 1)
-        layout.addWidget(self._num_sigma_label, 4, 0)
-        layout.addWidget(self._num_sigma_value, 4, 1)
-        layout.addWidget(self._threshold_label, 5, 0)
-        layout.addWidget(self._threshold_value, 5, 1)
-        layout.addWidget(self._overlap_label, 6, 0)
-        layout.addWidget(self._overlap_value, 6, 1)
-        layout.addWidget(self._log_scale_label, 7, 0)
-        layout.addWidget(self._log_scale_value, 7, 1)
+        layout.addWidget(self._current_frame_check, 2, 0, 1, 2)
+        layout.addWidget(self._min_sigma_label, 3, 0)
+        layout.addWidget(self._min_sigma_value, 3, 1)
+        layout.addWidget(self._max_sigma_label, 4, 0)
+        layout.addWidget(self._max_sigma_value, 4, 1)
+        layout.addWidget(self._num_sigma_label, 5, 0)
+        layout.addWidget(self._num_sigma_value, 5, 1)
+        layout.addWidget(self._threshold_label, 6, 0)
+        layout.addWidget(self._threshold_value, 6, 1)
+        layout.addWidget(self._overlap_label, 7, 0)
+        layout.addWidget(self._overlap_value, 7, 1)
+        layout.addWidget(self._log_scale_label, 8, 0)
+        layout.addWidget(self._log_scale_value, 8, 1)
         self.setLayout(layout)
-        self._init_layer_list()
+        # self._init_layer_list()
         self.toggle_advanced(False)
 
-    def _init_layer_list(self):
+    def init_layer_list(self):
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.image.image.Image):
                 self._input_layer_box.addItem(layer.name)
+        if self._input_layer_box.count() < 1:
+            # print('disable the run button')
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
 
     def _on_layer_change(self, e):
         current_text = self._input_layer_box.currentText()
@@ -223,6 +275,43 @@ class SLogWidget(SNapariWidget):
                 self._input_layer_box.addItem(layer.name)
         if is_current_item_still_here:
             self._input_layer_box.setCurrentText(current_text)
+        if self._input_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
+
+    def check_inputs(self):
+        # Min sigma
+        try:
+            _ = float(self._min_sigma_value.text())
+        except ValueError as err:
+            self.show_error(f"Min Sigma input must be a number")
+            return False
+        # Max sigma
+        try:
+            _ = float(self._max_sigma_value.text())
+        except ValueError as err:
+            self.show_error(f"Max Sigma input must be a number")
+            return False
+        # Num sigma
+        try:
+            _ = int(self._num_sigma_value.text())
+        except ValueError as err:
+            self.show_error(f"Num Sigma input must be a number")
+            return False
+        # Threshold value
+        try:
+            _ = float(self._threshold_value.text())
+        except ValueError as err:
+            self.show_error(f"Threshold input must be a number")
+            return False
+        # Overlap value
+        try:
+            _ = float(self._overlap_value.text())
+        except ValueError as err:
+            self.show_error(f"Overlap input must be a number")
+            return False
+        return True
 
     def state(self) -> dict:
         return {'name': 'SDoGDetector',
@@ -232,7 +321,8 @@ class SLogWidget(SNapariWidget):
                                'num_sigma': int(self._num_sigma_value.text()),
                                'threshold': float(self._threshold_value.text()),
                                'log_scale': self._log_scale_value.currentText(),
-                               'overlap': float(self._overlap_value.text())
+                               'overlap': float(self._overlap_value.text()),
+                               'current_frame': self._current_frame_check.isChecked()
                                },
                 'outputs': ['points', 'LoG detections']
                 }
@@ -266,6 +356,8 @@ class SLogWorker(SNapariWorker):
     def run(self):
         """Execute the processing"""
         state = self.widget.state()
+        if state is None:
+            return
         input_image_layer = state['inputs']['image']
         state_params = state['parameters']
 
@@ -286,7 +378,12 @@ class SLogWorker(SNapariWorker):
 
         image = self.viewer.layers[input_image_layer].data
         scale = self.viewer.layers[input_image_layer].scale
-        particles = detector.run(image, scale)
+        if state_params['current_frame']:
+            t = self.viewer.dims.current_step[0]
+            particles = detector.run(np.expand_dims(image[t, ...], 0), scale)
+            particles.data[:, 0] = t
+        else:
+            particles = detector.run(image, scale)
 
         self._out_data = {'data': particles.data, 'scale': scale,
                           'size': max_sigma,
@@ -312,6 +409,8 @@ class SDohWidget(SNapariWidget):
         self._input_layer_box = QComboBox()
         self._advanced_check = QCheckBox('advanced')
         self._advanced_check.stateChanged.connect(self.toggle_advanced)
+
+        self._current_frame_check = QCheckBox('Process only current frame')
 
         self._min_sigma_label = QLabel('Min sigma')
         self._min_sigma_value = QLineEdit('1')
@@ -339,26 +438,32 @@ class SDohWidget(SNapariWidget):
         layout.addWidget(self._input_layer_box, 0, 1)
         layout.addWidget(self._advanced_check, 1, 0, 1, 2)
 
-        layout.addWidget(self._min_sigma_label, 2, 0)
-        layout.addWidget(self._min_sigma_value, 2, 1)
-        layout.addWidget(self._max_sigma_label, 3, 0)
-        layout.addWidget(self._max_sigma_value, 3, 1)
-        layout.addWidget(self._num_sigma_label, 4, 0)
-        layout.addWidget(self._num_sigma_value, 4, 1)
-        layout.addWidget(self._threshold_label, 5, 0)
-        layout.addWidget(self._threshold_value, 5, 1)
-        layout.addWidget(self._overlap_label, 6, 0)
-        layout.addWidget(self._overlap_value, 6, 1)
-        layout.addWidget(self._log_scale_label, 7, 0)
-        layout.addWidget(self._log_scale_value, 7, 1)
+        layout.addWidget(self._current_frame_check, 2, 0, 1, 2)
+        layout.addWidget(self._min_sigma_label, 3, 0)
+        layout.addWidget(self._min_sigma_value, 3, 1)
+        layout.addWidget(self._max_sigma_label, 4, 0)
+        layout.addWidget(self._max_sigma_value, 4, 1)
+        layout.addWidget(self._num_sigma_label, 5, 0)
+        layout.addWidget(self._num_sigma_value, 5, 1)
+        layout.addWidget(self._threshold_label, 6, 0)
+        layout.addWidget(self._threshold_value, 6, 1)
+        layout.addWidget(self._overlap_label, 7, 0)
+        layout.addWidget(self._overlap_value, 7, 1)
+        layout.addWidget(self._log_scale_label, 8, 0)
+        layout.addWidget(self._log_scale_value, 8, 1)
         self.setLayout(layout)
-        self._init_layer_list()
+        # self._init_layer_list()
         self.toggle_advanced(False)
 
-    def _init_layer_list(self):
+    def init_layer_list(self):
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.image.image.Image):
                 self._input_layer_box.addItem(layer.name)
+        if self._input_layer_box.count() < 1:
+            # print('disable the run button')
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
 
     def _on_layer_change(self, e):
         current_text = self._input_layer_box.currentText()
@@ -371,6 +476,43 @@ class SDohWidget(SNapariWidget):
                 self._input_layer_box.addItem(layer.name)
         if is_current_item_still_here:
             self._input_layer_box.setCurrentText(current_text)
+        if self._input_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
+
+    def check_inputs(self):
+        # Min sigma
+        try:
+            _ = float(self._min_sigma_value.text())
+        except ValueError as err:
+            self.show_error(f"Min Sigma input must be a number")
+            return False
+        # Max sigma
+        try:
+            _ = float(self._max_sigma_value.text())
+        except ValueError as err:
+            self.show_error(f"Max Sigma input must be a number")
+            return False
+        # Num sigma
+        try:
+            _ = int(self._num_sigma_value.text())
+        except ValueError as err:
+            self.show_error(f"Num Sigma input must be an integer")
+            return False
+        # Threshold value
+        try:
+            _ = float(self._threshold_value.text())
+        except ValueError as err:
+            self.show_error(f"Threshold input must be a number")
+            return False
+        # Overlap value
+        try:
+            _ = float(self._overlap_value.text())
+        except ValueError as err:
+            self.show_error(f"Overlap input must be a number")
+            return False
+        return True
 
     def state(self) -> dict:
         return {'name': 'SDoGDetector',
@@ -380,7 +522,8 @@ class SDohWidget(SNapariWidget):
                                'num_sigma': int(self._num_sigma_value.text()),
                                'threshold': float(self._threshold_value.text()),
                                'log_scale': self._log_scale_value.currentText(),
-                               'overlap': float(self._overlap_value.text())
+                               'overlap': float(self._overlap_value.text()),
+                               'current_frame': self._current_frame_check.isChecked()
                                },
                 'outputs': ['points', 'LoG detections']
                 }
@@ -433,7 +576,13 @@ class SDohWorker(SNapariWorker):
 
         image = self.viewer.layers[input_image_layer].data
         scale = self.viewer.layers[input_image_layer].scale
-        particles = detector.run(image, scale)
+
+        if state_params['current_frame']:
+            t = self.viewer.dims.current_step[0]
+            particles = detector.run(np.expand_dims(image[t, ...], 0), scale)
+            particles.data[:, 0] = t
+        else:
+            particles = detector.run(image, scale)
 
         self._out_data = {'data': particles.data, 'scale': scale,
                           'size': max_sigma,
@@ -446,3 +595,123 @@ class SDohWorker(SNapariWorker):
                                scale=self._out_data['scale'],
                                size=self._out_data['size'],
                                name='DoH detections')
+
+
+# ------------------ Seg -------------------
+class SSegWidget(SNapariWidget):
+    def __init__(self, napari_viewer):
+        super().__init__()
+        self.viewer = napari_viewer
+
+        napari_viewer.events.layers_change.connect(self._on_layer_change)
+
+        self._input_layer_box = QComboBox()
+        self._advanced_check = QCheckBox('advanced')
+        self._advanced_check.stateChanged.connect(self.toggle_advanced)
+
+        self._current_frame_check = QCheckBox('Process only current frame')
+
+        self._type_label = QLabel('Segmentation type')
+        self._type_value = QComboBox()
+        self._type_value.addItems(['Labels', 'Mask'])
+
+        layout = QGridLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        layout.addWidget(QLabel('Image layer'), 0, 0)
+        layout.addWidget(self._input_layer_box, 0, 1)
+        layout.addWidget(self._advanced_check, 1, 0, 1, 2)
+
+        layout.addWidget(self._current_frame_check, 2, 0, 1, 2)
+        layout.addWidget(self._type_label, 8, 0)
+        layout.addWidget(self._type_value, 8, 1)
+        self.setLayout(layout)
+        self.toggle_advanced(False)
+
+    def init_layer_list(self):
+        for layer in self.viewer.layers:
+            if isinstance(layer, napari.layers.image.image.Image):
+                self._input_layer_box.addItem(layer.name)
+        if self._input_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
+
+    def _on_layer_change(self, e):
+        current_text = self._input_layer_box.currentText()
+        self._input_layer_box.clear()
+        is_current_item_still_here = False
+        for layer in self.viewer.layers:
+            if isinstance(layer, napari.layers.image.image.Image):
+                if layer.name == current_text:
+                    is_current_item_still_here = True
+                self._input_layer_box.addItem(layer.name)
+        if is_current_item_still_here:
+            self._input_layer_box.setCurrentText(current_text)
+        if self._input_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
+
+    def check_inputs(self):
+        return True
+
+    def state(self) -> dict:
+        return {'name': 'SDoGDetector',
+                'inputs': {'image': self._input_layer_box.currentText()},
+                'parameters': {'type': self._type_value.currentText(),
+                               'current_frame': self._current_frame_check.isChecked()
+                               },
+                'outputs': ['points', 'LoG detections']
+                }
+
+    def toggle_advanced(self, value):
+        """Change the parameters widget to advanced mode"""
+        self.advanced.emit(value)
+        self.is_advanced = value
+
+
+class SSegWorker(SNapariWorker):
+    def __init__(self, napari_viewer, widget):
+        super().__init__(napari_viewer, widget)
+
+        self.observer = SProgressObserver()
+        self.observer.progress_signal.connect(self.progress)
+        self.observer.notify_signal.connect(self.log)
+
+        self._out_data = None
+
+    def run(self):
+        """Execute the processing"""
+        state = self.widget.state()
+        input_image_layer = state['inputs']['image']
+        state_params = state['parameters']
+
+        is_mask = False
+        if state_params['type'] == 'Mask':
+            is_mask = True
+
+        detector = SSegDetector(is_mask=is_mask)
+        detector.add_observer(self.observer)
+
+        image = self.viewer.layers[input_image_layer].data
+        scale = self.viewer.layers[input_image_layer].scale
+
+        if state_params['current_frame']:
+            t = self.viewer.dims.current_step[0]
+            particles = detector.run(np.expand_dims(image[t, ...], 0), scale)
+            particles.data[:, 0] = t
+        else:
+            particles = detector.run(image, scale)
+
+        self._out_data = {'data': particles.data, 'scale': scale,
+                          'size': 2,
+                          'name': 'Seg detections'}
+
+        self.finished.emit()
+
+    def set_outputs(self):
+        self.viewer.add_points(self._out_data['data'],
+                               scale=self._out_data['scale'],
+                               size=self._out_data['size'],
+                               name='Seg detections')

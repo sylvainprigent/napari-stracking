@@ -1,6 +1,6 @@
 from qtpy.QtWidgets import (QWidget, QGridLayout, QLabel, QPushButton,
                             QHBoxLayout, QVBoxLayout, QProgressBar,
-                            QTextEdit)
+                            QTextEdit, QMessageBox)
 from qtpy import QtCore
 from qtpy.QtCore import Signal, QThread, QObject
 
@@ -12,6 +12,18 @@ class SNapariWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.is_advanced = False
+
+    @staticmethod
+    def show_error(message):
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Critical)
+
+        msg.setText(message)
+        msg.setWindowTitle("STracking error")
+        msg.exec_()
+
+    def check_inputs(self):
+        raise NotImplementedError()
 
     def state(self):
         raise NotImplementedError()
@@ -92,7 +104,8 @@ class SNapariPlugin(QWidget):
         self.set_advanced(self.widget.is_advanced)
 
     def run(self):
-        self.thread.start()
+        if self.widget.check_inputs():
+            self.thread.start()
 
     def set_advanced(self, mode: bool):
         self.log_widget.set_advanced(mode)

@@ -8,7 +8,7 @@ Replace code below according to your needs.
 """
 from napari_plugin_engine import napari_hook_implementation
 from ._sdetection_plugins import (SDetectorDog, SDetectorDoh,
-                                  SDetectorLog)
+                                  SDetectorLog, SDetectorSeg)
 from ._slinking_plugins import (SLinkerShortestPath)
 from ._sproperties_plugins import SParticlesProperties
 from ._sfeatures_plugins import STracksFeatures
@@ -17,6 +17,7 @@ from ._scale_plugin import SScale
 from ._reader_plugin import SLoad
 from ._export_plugin import SExport
 
+
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():
     # you can return either a single widget, or a sequence of widgets
@@ -24,6 +25,7 @@ def napari_experimental_provide_dock_widget():
             SDetectorDog,
             SDetectorDoh,
             SDetectorLog,
+            SDetectorSeg,
             STracksFeatures,
             SLinkerShortestPath,
             SFilterTrack,

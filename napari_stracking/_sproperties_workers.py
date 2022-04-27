@@ -1,3 +1,4 @@
+import qtpy.QtCore
 from qtpy.QtWidgets import (QWidget, QGridLayout, QLabel, QLineEdit,
                             QComboBox, QCheckBox, QVBoxLayout, QHBoxLayout,
                             QPushButton)
@@ -20,6 +21,7 @@ class SSpotPropertiesWidget(SNapariWidget):
         # viewers
         self.properties_viewer = SPropertiesViewer(napari_viewer)
         self.properties_viewer.setVisible(False)
+        self.properties_viewer.setWindowFlag(qtpy.QtCore.Qt.WindowStaysOnTopHint, True)
 
         # create the dict of the filters
         global_layout = QVBoxLayout()
