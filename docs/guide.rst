@@ -149,6 +149,23 @@ The *S Detector LoG* plugin has 4 parameters:
    </details>
 
 
+.. raw:: html
+
+   <details>
+   <summary><a>S Detector Seg</a></summary>
+
+    When we need to track objects that are larger than spots (for example cells), it is often a better strategy to use a segmentation algorithm in order to
+    obtain a object mask or labels image and then track the object centroids. The *S Detector Seg* plugin allows to extract the centroids of
+    of each object from a segmentation mask (or labels) and convert these centroids to STracking detections:
+
+.. image:: images/ssegdetector_res.png
+   :width: 600
+
+
+.. raw:: html
+
+   </details>
+
 Particles properties
 --------------------
 
