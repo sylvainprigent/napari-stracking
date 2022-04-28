@@ -34,10 +34,14 @@ class SLinkerNearestNeighborWidget(SNapariWidget):
         self.setLayout(layout)
         self._init_layer_list()
 
-    def _init_layer_list(self):
+    def init_layer_list(self):
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.points.points.Points):
                 self._points_layer_box.addItem(layer.name)
+        if self._points_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
 
     def _on_layer_change(self, e):
         current_points_text = self.points_layer_box.currentText()
@@ -50,6 +54,30 @@ class SLinkerNearestNeighborWidget(SNapariWidget):
                 self.points_layer_box.addItem(layer.name)
         if is_current_points_item_still_here:
             self.points_layer_box.setCurrentText(current_points_text)
+        if self._points_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
+
+    def check_inputs(self):
+        try:
+            distance = float(self._max_distance_value.text())
+            if distance <= 0:
+                self.show_error("Max distance must be positive")
+                return False
+        except ValueError as err:
+            self.show_error("Max distance must be a number")
+            return False
+
+        try:
+            gap = int(self._gap_value.text())
+            if gap < 1:
+                self.show_error("Minimum gap value is 1")
+                return False
+        except ValueError as err:
+            self.show_error("Gap value must be an integer")
+            return False
+        return True
 
     def state(self) -> dict:
         return {'name': 'SNearestNeighborLinker',
@@ -85,7 +113,7 @@ class SLinkerNearestNeighborWorker(SNapariWorker):
         linker = SNNLinker(cost=euclidean_cost, gap=gap)
         linker.add_observer(self.observer)
         particles = SParticles(data=self.viewer.layers[points_layer].data,
-                               properties=dict(),
+                               properties=self.viewer.layers[points_layer].properties,
                                scale=self.viewer.layers[points_layer].scale)
         self._out_data = linker.run(particles)
 
@@ -99,7 +127,11 @@ class SLinkerNearestNeighborWorker(SNapariWorker):
             msg.exec_()
         else:
             self.viewer.add_tracks(self._out_data.data,
-                                   name='S Nearest Neighbor Tracks')
+                                   name='S Shortest Path Tracks',
+                                   scale=self._out_data.scale,
+                                   properties=self._out_data.properties,
+                                   metadata=self._out_data.features,
+                                   graph=self._out_data.graph)
 
 
 # ------------------- SLinkerShortestPath ------------
@@ -126,12 +158,16 @@ class SLinkerShortestPathWidget(SNapariWidget):
         layout.addWidget(self._gap_label, 2, 0)
         layout.addWidget(self._gap_value, 2, 1)
         self.setLayout(layout)
-        self._init_layer_list()
+        self.init_layer_list()
 
-    def _init_layer_list(self):
+    def init_layer_list(self):
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.points.points.Points):
                 self._points_layer_box.addItem(layer.name)
+        if self._points_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
 
     def _on_layer_change(self, e):
         current_points_text = self._points_layer_box.currentText()
@@ -144,6 +180,30 @@ class SLinkerShortestPathWidget(SNapariWidget):
                 self._points_layer_box.addItem(layer.name)
         if is_current_points_item_still_here:
             self._points_layer_box.setCurrentText(current_points_text)
+        if self._points_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
+
+    def check_inputs(self):
+        try:
+            distance = float(self._max_distance_value.text())
+            if distance <= 0:
+                self.show_error("Max distance must be positive")
+                return False
+        except ValueError as err:
+            self.show_error("Max distance must be a number")
+            return False
+
+        try:
+            gap = int(self._gap_value.text())
+            if gap < 1:
+                self.show_error("Minimum gap value is 1")
+                return False
+        except ValueError as err:
+            self.show_error("Gap value must be an integer")
+            return False
+        return True
 
     def state(self) -> dict:
         return {'name': 'SShortestPathLinker',
@@ -179,7 +239,7 @@ class SLinkerShortestPathWorker(SNapariWorker):
         linker = SPLinker(cost=euclidean_cost, gap=gap)
         linker.add_observer(self.observer)
         particles = SParticles(data=self.viewer.layers[points_layer].data,
-                               properties=dict(),
+                               properties=self.viewer.layers[points_layer].properties,
                                scale=self.viewer.layers[points_layer].scale)
         self._out_data = linker.run(particles)
 
@@ -192,6 +252,12 @@ class SLinkerShortestPathWorker(SNapariWorker):
             msg.setText("No track found")
             msg.exec_()
         else:
+            print('finished tracking with info')
+            print('properties=', self._out_data.properties)
+            print('metadata=', self._out_data.features)
             self.viewer.add_tracks(self._out_data.data,
                                    name='S Shortest Path Tracks',
-                                   scale=self._out_data.scale)
+                                   scale=self._out_data.scale,
+                                   properties=self._out_data.properties,
+                                   metadata=self._out_data.features,
+                                   graph=self._out_data.graph)

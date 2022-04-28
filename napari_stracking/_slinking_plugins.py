@@ -21,8 +21,10 @@ class SLinkerNearestNeighbor(SNapariPlugin):
         self.widget = SLinkerNearestNeighborWidget(napari_viewer)
         self.worker = SLinkerNearestNeighborWorker(napari_viewer, self.widget)
         self.widget.advanced.connect(self.set_advanced)
+        self.widget.enable.connect(self.set_enable)
         self.fill_widget_resize = 0
         self.init_ui()
+        self.widget.init_layer_list()
         self.set_advanced(True)
 
 
@@ -41,6 +43,8 @@ class SLinkerShortestPath(SNapariPlugin):
         self.widget = SLinkerShortestPathWidget(napari_viewer)
         self.worker = SLinkerShortestPathWorker(napari_viewer, self.widget)
         self.widget.advanced.connect(self.set_advanced)
+        self.widget.enable.connect(self.set_enable)
         self.fill_widget_resize = 0
         self.init_ui()
+        self.widget.init_layer_list()
         self.set_advanced(True)

@@ -111,7 +111,6 @@ class SNapariPlugin(QWidget):
         self.log_widget.set_advanced(mode)
 
     def set_enable(self, mode: bool):
-        print('plugin set run enabled to:', mode)
         self.run_btn.setEnabled(mode)
 
     def set_outputs(self):

@@ -1,3 +1,4 @@
+import qtpy.QtCore
 from qtpy.QtWidgets import (QWidget, QGridLayout, QLabel, QLineEdit,
                             QComboBox, QCheckBox, QVBoxLayout, QHBoxLayout,
                             QPushButton)
@@ -21,6 +22,7 @@ class STracksFeaturesWidget(SNapariWidget):
         # viewers
         self.features_viewer = SFeaturesViewer(napari_viewer)
         self.features_viewer.setVisible(False)
+        self.features_viewer.setWindowFlag(qtpy.QtCore.Qt.WindowStaysOnTopHint, True)
 
         # create the dict of the filters
         global_layout = QVBoxLayout()
@@ -71,9 +73,9 @@ class STracksFeaturesWidget(SNapariWidget):
         # viewer buttons
         viewer_bar = QWidget()
         viewer_layout = QHBoxLayout()
-        properties_btn = QPushButton('tracks features')
-        properties_btn.released.connect(self._on_show_features)
-        viewer_layout.addWidget(properties_btn)
+        self.properties_btn = QPushButton('tracks features')
+        self.properties_btn.released.connect(self._on_show_features)
+        viewer_layout.addWidget(self.properties_btn)
         viewer_bar.setLayout(viewer_layout)
         viewer_layout.setContentsMargins(0, 0, 0, 0)
 
@@ -87,13 +89,16 @@ class STracksFeaturesWidget(SNapariWidget):
         layout.addWidget(viewer_bar, 0)
         layout.insertSpacing(2, -9)
         filter_frame.setLayout(layout)
-        self._on_layer_change(None)
+        self.init_layer_list()
         self.toggle_advanced(False)
 
     def toggle_advanced(self, value):
         """Change the parameters widget to advanced mode"""
         self.advanced.emit(value)
         self.is_advanced = value
+
+    def init_layer_list(self):
+        self._on_layer_change(None)
 
     def _on_layer_change(self, e):
         current_points_text = self._tracks_layer_box.currentText()
@@ -106,6 +111,12 @@ class STracksFeaturesWidget(SNapariWidget):
                 self._tracks_layer_box.addItem(layer.name)
         if is_current_points_item_still_here:
             self._tracks_layer_box.setCurrentText(current_points_text)
+        if self._tracks_layer_box.count() < 1:
+            self.enable.emit(False)
+            self.properties_btn.setEnabled(False)
+        else:
+            self.enable.emit(True)
+            self.properties_btn.setEnabled(True)
 
     def _on_tracks_layer_change(self, text):
         self.features_viewer.layer_name = text
@@ -126,6 +137,16 @@ class STracksFeaturesWidget(SNapariWidget):
         elif filter_ == 'Displacement':
             self.pipeline_list_widget.add_widget('Displacement',
                                                  SDisplacementFeatureWidget())
+
+    def show_features(self):
+        self._on_show_features()
+
+    def check_inputs(self):
+        return_state = True
+        for widget in self.pipeline_list_widget.widgets():
+            if not widget.check_inputs():
+                return_state = False
+        return return_state
 
     def state(self) -> dict:
         filters_names = []
@@ -151,6 +172,9 @@ class SLengthFeatureWidget(QWidget):
         layout = QGridLayout()
         self.setLayout(layout)
 
+    def check_inputs(self):
+        return True
+
     def parameters(self):
         return {}
 
@@ -162,6 +186,9 @@ class SDistanceFeatureWidget(QWidget):
         layout = QGridLayout()
         self.setLayout(layout)
 
+    def check_inputs(self):
+        return True
+
     def parameters(self):
         return {}
 
@@ -172,6 +199,9 @@ class SDisplacementFeatureWidget(QWidget):
 
         layout = QGridLayout()
         self.setLayout(layout)
+
+    def check_inputs(self):
+        return True
 
     def parameters(self):
         return {}
@@ -227,3 +257,4 @@ class STracksFeaturesWorker(SNapariWorker):
         input_tracks_layer_name = state['inputs']['tracks']
         self.viewer.layers[input_tracks_layer_name].metadata.update(
             self._out_data.features)
+        self.widget.show_features()

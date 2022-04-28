@@ -61,13 +61,16 @@ class STrackFilterWidget(SNapariWidget):
         layout.addWidget(list_widget)
         layout.insertSpacing(2, -9)
         self.setLayout(layout)
-        self._on_layer_change(None)
+        self.init_layer_list()
         self.toggle_advanced(False)
 
     def toggle_advanced(self, value):
         """Change the parameters widget to advanced mode"""
         self.advanced.emit(value)
         self.is_advanced = value
+
+    def init_layer_list(self):
+        self._on_layer_change(None)
 
     def _on_layer_change(self, e):
         current_tracks_text = self._tracks_layer_box.currentText()
@@ -80,6 +83,10 @@ class STrackFilterWidget(SNapariWidget):
                 self._tracks_layer_box.addItem(layer.name)
         if is_current_tracks_item_still_here:
             self._tracks_layer_box.setCurrentText(current_tracks_text)
+        if self._tracks_layer_box.count() < 1:
+            self.enable.emit(False)
+        else:
+            self.enable.emit(True)
 
     def _on_add(self):
         filter_ = self.filters_names.currentText()
@@ -88,7 +95,14 @@ class STrackFilterWidget(SNapariWidget):
             self.pipeline_list_widget.add_widget('Features',
                                                  SFeatureFilterWidget(
                                                      self.viewer,
-                                                     current_layer))
+                                                     current_layer, self))
+
+    def check_inputs(self):
+        return_state = True
+        for widget in self.pipeline_list_widget.widgets():
+            if not widget.check_inputs():
+                return_state = False
+        return return_state
 
     def state(self) -> dict:
         filters_names = []
@@ -108,10 +122,11 @@ class STrackFilterWidget(SNapariWidget):
 
 
 class SFeatureFilterWidget(QWidget):
-    def __init__(self, napari_viewer, layer_name):
+    def __init__(self, napari_viewer, layer_name, parent_plugin):
         super().__init__()
         self.viewer = napari_viewer
         self.layer_name = layer_name
+        self.parent_plugin = parent_plugin
 
         self.features_box = QComboBox()
         if len(napari_viewer.layers) > 0:
@@ -132,6 +147,19 @@ class SFeatureFilterWidget(QWidget):
         layout.addWidget(max_label, 2, 0)
         layout.addWidget(self.max_val, 2, 1)
         self.setLayout(layout)
+
+    def check_inputs(self):
+        try:
+            _ = float(self.min_val.text())
+        except ValueError as err:
+            self.parent_plugin.show_error(f"Min value must be a number")
+            return False
+        try:
+            _ = float(self.max_val.text())
+        except ValueError as err:
+            self.parent_plugin.show_error(f"Max value must be a number")
+            return False
+        return True
 
     def parameters(self):
         return {'feature': self.features_box.currentText(),
@@ -193,5 +221,9 @@ class STrackFilterWorker(SNapariWorker):
             msg.exec_()
         else:
             self.viewer.add_tracks(self._out_data.data,
-                                   name='S Tracks Filter')
+                                   name='S Tracks Filter',
+                                   scale=self._out_data.scale,
+                                   properties=self._out_data.properties,
+                                   metadata=self._out_data.features,
+                                   graph=self._out_data.graph)
 
