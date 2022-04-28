@@ -16,6 +16,7 @@ from ._strackfilter_plugins import SFilterTrack
 from ._scale_plugin import SScale
 from ._reader_plugin import SLoad
 from ._export_plugin import SExport
+from ._pipeline_plugin import SPipeline
 
 
 @napari_hook_implementation
@@ -31,5 +32,6 @@ def napari_experimental_provide_dock_widget():
             SFilterTrack,
             SScale,
             SLoad,
-            SExport
+            SExport,
+            SPipeline
             ]
