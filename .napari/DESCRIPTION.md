@@ -3,31 +3,13 @@
 The STracking suite provides a set of plugins for particles tracking in 2D+t and 3D+t images. 
 A classical particles tracking pipeline is made of 5 sequential steps:
 
-* Particles detection frame by frame
+<video width="512" height="288" controls>
+  <source src="https://raw.githubusercontent.com/sylvainprigent/napari-stracking/main/docs/images/intro.mp4" type="video/mp4">
+</video>
 
-![img](https://raw.githubusercontent.com/sylvainprigent/napari-stracking/main/docs/images/sdogdetector_res.png)
-
-
-* Particles properties calculation (optional)
-
-![img](https://raw.githubusercontent.com/sylvainprigent/napari-stracking/main/docs/images/sparticlesproperties_res.png?raw=true)
-
-
-* Particles linking
-
-![img](https://raw.githubusercontent.com/sylvainprigent/napari-stracking/main/docs/images/slinkershortestpath_res.png?raw=true)
-
-
-* Tracks features extraction (optional)
-
-![img](https://raw.githubusercontent.com/sylvainprigent/napari-stracking/main/docs/images/stracksfeatures_res.png?raw=true)
-
-
-* Tracks filtering (optional)
-
-![img](https://raw.githubusercontent.com/sylvainprigent/napari-stracking/main/docs/images/sfiltertracks_res.png?raw=true)
-
-
+   
+A full documentation is available [here](<https://sylvainprigent.github.io/napari-stracking/guide.html>)   
+    
 ## Installation
 
 You can install `napari-stracking` via [pip]:
