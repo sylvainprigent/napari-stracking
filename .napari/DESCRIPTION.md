@@ -41,7 +41,7 @@ the coverage at least stays the same before you submit a pull request.
 
 ## License
 
-Distributed under the terms of the [GNU GPL v3.0] license,
+Distributed under the terms of the [BSD-3] license,
 "napari-tracks-reader" is free and open source software
 
 ## Issues
