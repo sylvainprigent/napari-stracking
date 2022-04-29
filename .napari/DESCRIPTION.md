@@ -1,14 +1,11 @@
 # Description
 
 The STracking suite provides a set of plugins for particles tracking in 2D+t and 3D+t images. 
-A classical particles tracking pipeline is made of 5 sequential steps:
 
-<video width="512" height="288" controls>
-  <source src="https://raw.githubusercontent.com/sylvainprigent/napari-stracking/main/docs/images/intro.mp4" type="video/mp4">
+<video src="https://raw.githubusercontent.com/sylvainprigent/napari-stracking/main/docs/images/intro.mp4" controls="controls" style="max-width: 730px;">
 </video>
-
    
-A full documentation is available [here](<https://sylvainprigent.github.io/napari-stracking/guide.html>)   
+A full documentation is available [here](<https://sylvainprigent.github.io/napari-stracking/quickstart.html>)   
     
 ## Installation
 
