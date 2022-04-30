@@ -70,7 +70,9 @@
   <section id="guide">
 <h1>Guide<a class="headerlink" href="#guide" title="Permalink to this headline"></a></h1>
 <p>This page aims at guiding the <cite>napari-stracking</cite> user step by step to build a pipeline for particles tracking in 2D+t or
-3D+t images. A classical particles tracking pipeline is made of 5 sequential steps:</p>
+3D+t images.
+The image used in this documentation is available [<a class="reference external" href="https://github.com/sylvainprigent/stracking/raw/main/stracking/data/fake_tracks1.tif">here</a>].
+A classical particles tracking pipeline is made of 5 sequential steps:</p>
 <ol class="arabic simple">
 <li><p>Particles detection frame by frame</p></li>
 </ol>
@@ -97,15 +99,15 @@
 particles (or spots) detection algorithms have been proposed in the scientific literature. The choice of the most appropriate particles detector should be data
 driven. Furthermore, the performance of a particles detector is sensitive to the image quality. An image denoising
 pre-processing step is sometime needed to improve the particles detection.</p>
-<p>Particles detections plugins availeble in <strong>napari-stracking</strong> are:</p>
+<p>Particles detections plugins available in <strong>napari-stracking</strong> are:</p>
 <details>
 <summary><a>S Detector DoG</a></summary><p>The Difference of Gaussian (DoG) detector enhance spots in images by calculated a filtered image which is the difference
-between two versions of the image filtered with a gaussian filter with different sigmas
+between two versions of the image filtered with a gaussian filter with different sigmas (width)
 [<a class="reference external" href="https://en.wikipedia.org/wiki/Difference_of_Gaussians">wiki DoG</a>].
 The <em>S Detector DoG</em> plugin uses the implementation from <a class="reference external" href="https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_dog">skimage DoG</a></p>
-<p>We start the <em>S Detector DoG</em> by opening <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Detector DoG</em></p>
+<p>We start the <em>S Detector DoG</em> by opening <em>Plugins&gt;napari-stracking&gt;S Detector DoG</em></p>
 <a class="reference internal image-reference" href="_images/sdogdetector.png"><img alt="_images/sdogdetector.png" src="_images/sdogdetector.png" style="width: 600px;" /></a>
-<p>The input is an image layer. If only one image layer is opened in Napari, it is automatically selected. Otherwise,
+<p>The input is an image layer. If only one image layer is opened in napari, it is automatically selected. Otherwise,
 we select the image layer we want to process.
 The <em>S Detector DoG</em> plugin has 3 parameters:</p>
 <ol class="arabic simple">
@@ -119,13 +121,13 @@ interest. This parameter is image dependent and can be chosen by trial and error
 </ol>
 <a class="reference internal image-reference" href="_images/sdogdetector_res.png"><img alt="_images/sdogdetector_res.png" src="_images/sdogdetector_res.png" style="width: 600px;" /></a>
 </details><details>
-<summary><a>S Detector DoH </a></summary><p>The Determinant of Hessian (DoH) detector is a multiscale spot detector that uses the determinant of the hessian matrix
+<summary><a>S Detector DoH </a></summary><p>The Determinant of Hessian (DoH) detector is a multi-scale spot detector that uses the determinant of the hessian matrix
 of the input image
 [<a class="reference external" href="https://en.wikipedia.org/wiki/Blob_detection#The_determinant_of_the_Hessian">wiki DoH</a>].
 The <em>S Detector DoH</em> plugin uses the implementation from <a class="reference external" href="https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_doh">skimage DoH</a></p>
-<p>We start the <em>S Detector DoH</em> by opening <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Detector DoH</em></p>
+<p>We start the <em>S Detector DoH</em> by opening <em>Plugins&gt;napari-stracking&gt;S Detector DoH</em></p>
 <a class="reference internal image-reference" href="_images/sdohdetector.png"><img alt="_images/sdohdetector.png" src="_images/sdohdetector.png" style="width: 600px;" /></a>
-<p>The input is an image layer. If only one image layer is opened in Napari, it is automatically selected. Otherwise,
+<p>The input is an image layer. If only one image layer is opened in napari, it is automatically selected. Otherwise,
 we select the image layer we want to process.
 The <em>S Detector DoH</em> plugin has 4 parameters:</p>
 <ol class="arabic simple">
@@ -145,9 +147,9 @@ interest. This parameter is image dependent and can be chosen by trial and error
 image filtered with a Gaussian filter to enhance spots. The scale is determined by the size of the Gaussian filter.
 [<a class="reference external" href="https://en.wikipedia.org/wiki/Blob_detection#The_Laplacian_of_Gaussian">wiki LoG</a>].
 The <em>S Detector LoG</em> plugin uses the implementation for <a class="reference external" href="https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log">skimage LoG</a></p>
-<p>To start the <em>S Detector LoG</em> open <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Detector LoG</em></p>
+<p>To start the <em>S Detector LoG</em> open <em>Plugins&gt;napari-stracking&gt;S Detector LoG</em></p>
 <a class="reference internal image-reference" href="_images/slogdetector.png"><img alt="_images/slogdetector.png" src="_images/slogdetector.png" style="width: 600px;" /></a>
-<p>The input is an image layer. If only one image layer is opened in Napari, it is automatically selected. Otherwise,
+<p>The input is an image layer. If only one image layer is opened in napari, it is automatically selected. Otherwise,
 we select the image layer we want to process.
 The <em>S Detector LoG</em> plugin has 4 parameters:</p>
 <ol class="arabic simple">
@@ -162,13 +164,19 @@ interest. This parameter is image dependent and can be chosen by trial and error
 <em>0.2</em> allows to detect all the particles without false alarm.</p></li>
 </ol>
 <a class="reference internal image-reference" href="_images/slogdetector_res.png"><img alt="_images/slogdetector_res.png" src="_images/slogdetector_res.png" style="width: 600px;" /></a>
+</details><details>
+<summary><a>S Detector Seg</a></summary>
+
+ When we need to track objects that are larger than spots (for example cells), it is often a better strategy to use a segmentation algorithm in order to
+ obtain a object mask or labels image and then track the object centroids. The *S Detector Seg* plugin allows to extract the centroids of
+ of each object from a segmentation mask (or labels) and convert these centroids to STracking detections:<a class="reference internal image-reference" href="_images/ssegdetector_res.png"><img alt="_images/ssegdetector_res.png" src="_images/ssegdetector_res.png" style="width: 600px;" /></a>
 </details></section>
 <section id="particles-properties">
 <h2>Particles properties<a class="headerlink" href="#particles-properties" title="Permalink to this headline"></a></h2>
 <p>The particles properties plugin allows to calculate properties of each particles (mean intensity for example). This
 step is not mandatory, but can be very useful for the tracks analysis depending on the scientific application. To ease
 the properties calculation, all the properties are grouped in a single plugin called <em>S Particles Properties</em>.</p>
-<p>To open the particles properties plugin, open the plugin: <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Detector DoG</em></p>
+<p>To open the particles properties plugin, open the plugin: <em>Plugins&gt;napari-stracking&gt;S Detector DoG</em></p>
 <a class="reference internal image-reference" href="_images/sparticlesproperties.png"><img alt="_images/sparticlesproperties.png" src="_images/sparticlesproperties.png" style="width: 600px;" /></a>
 <p>This plugin needs two inputs:</p>
 <ol class="arabic simple">
@@ -179,7 +187,7 @@ the properties calculation, all the properties are grouped in a single plugin ca
 then click on the <em>Add</em> button. The feature appears in the panel. In this example, we selected the <em>Intensity</em> feature
 that needs one parameter: <em>Radius</em>. It is the radius used to calculate the particles intensity features. In this example
 we then set radius to 2.5 since it is the average radius of our particles. We can then click on <em>Run</em>.</p>
-<p>When the run is finished, there is no new layer in Napari since it is the input points layer that is updated. To
+<p>When the run is finished, there is no new layer in napari since it is the input points layer that is updated. To
 visualize the particles properties, we click on the <em>particles features</em> button:</p>
 <a class="reference internal image-reference" href="_images/sparticlesproperties_res.png"><img alt="_images/sparticlesproperties_res.png" src="_images/sparticlesproperties_res.png" style="width: 600px;" /></a>
 </section>
@@ -193,7 +201,7 @@ perform this task. Available linkers in the stracking plugin suite are:</p>
 First, a connection graph is created to connect all the neighboring particles of neighboring frames. Then, it
 iteratively estimates the optimal trajectories by applying a shortest path algorithms with a graph pruning strategy. The
 result is a set of trajectories. This tracker cannot handle split/merge events.</p>
-<p>To open the <em>S Linker Shortest Path</em> plugin, open the plugin: <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Linker Shortest Path</em></p>
+<p>To open the <em>S Linker Shortest Path</em> plugin, open the plugin: <em>Plugins&gt;napari-stracking&gt;S Linker Shortest Path</em></p>
 <a class="reference internal image-reference" href="_images/slinkershortestpath_res.png"><img alt="_images/slinkershortestpath_res.png" src="_images/slinkershortestpath_res.png" style="width: 600px;" /></a>
 <p>This plugin has one input which is the layer containing the particles detection. The two parameters are:</p>
 <ol class="arabic simple">
@@ -207,9 +215,9 @@ detections we can set a gap of 2 to enable connecting a particle from frame <em>
 </details></section>
 <section id="tracks-features">
 <h2>Tracks features<a class="headerlink" href="#tracks-features" title="Permalink to this headline"></a></h2>
-<p>The tracks features extraction plugin allows to measure feature of trajectories like length, distance… This
+<p>The tracks features extraction plugin allows to measure features of trajectories like length, distance… This
 step is not mandatory, but very useful for the tracks analysis depending on the scientific application. To ease the
-tracks features calculation, all the features are grouped in a single plugin called <em>S Tracks Feature</em>.</p>
+tracks features calculation, all the features are grouped in a single plugin called <em>S Tracks Features</em>.</p>
 <a class="reference internal image-reference" href="_images/stracksfeatures.png"><img alt="_images/stracksfeatures.png" src="_images/stracksfeatures.png" style="width: 600px;" /></a>
 <p>The input is a Tracks layer that contains the tracking result. Then, the <em>Add feature</em> menu allows to select the
 features we want to extract. In our example we selected the following features:</p>
@@ -230,12 +238,12 @@ frames.</p>
 tracking pipeline. For example they can be tracks of not moving object which are not interesting for some scientific
 applications. the <em>S Filter Tracks</em> plugins is a post processing plugin that aims at removing tracks with
 <em>unrealistic</em> properties (false positive).</p>
-<p>To open the <em>S Filter Tracks</em> plugin, open the plugin: <em>Plugins&gt;Add Dock Widget&gt;napari-stracking&gt;S Filter Tracks</em></p>
+<p>To open the <em>S Filter Tracks</em> plugin, open the plugin: <em>Plugins&gt;napari-stracking&gt;S Filter Tracks</em></p>
 <a class="reference internal image-reference" href="_images/sfiltertracks.png"><img alt="_images/sfiltertracks.png" src="_images/sfiltertracks.png" style="width: 600px;" /></a>
 <p>The input, is the layer containing the tracks. We can then select the features we want to filter with. In our fake
-example we want here to remove the track with a <em>Distance</em> above to 60 pixels. To do so, we select the distance feature
+example we want here to remove the track with a <em>Distance</em> above 60 pixels. To do so, we select the distance feature
 and set a minimum value of 0, and a maximum value of 60. We then click <em>Run</em>. When it finished we have a new layer with
-only 2 tracks since the tracks with a <em>Distance</em> above to 60 pixels has been removed:</p>
+only 2 tracks since the tracks with a <em>Distance</em> above 60 pixels has been removed:</p>
 <a class="reference internal image-reference" href="_images/sfiltertracks_res.png"><img alt="_images/sfiltertracks_res.png" src="_images/sfiltertracks_res.png" style="width: 600px;" /></a>
 </section>
 </section>

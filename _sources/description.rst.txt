@@ -2,7 +2,9 @@ Guide
 =====
 
 This page aims at guiding the `napari-stracking` user step by step to build a pipeline for particles tracking in 2D+t or
-3D+t images. A classical particles tracking pipeline is made of 5 sequential steps:
+3D+t images.
+The image used in this documentation is available [`here <https://github.com/sylvainprigent/stracking/raw/main/stracking/data/fake_tracks1.tif>`_].
+A classical particles tracking pipeline is made of 5 sequential steps:
 
 1. Particles detection frame by frame
 
@@ -37,7 +39,7 @@ particles (or spots) detection algorithms have been proposed in the scientific l
 driven. Furthermore, the performance of a particles detector is sensitive to the image quality. An image denoising
 pre-processing step is sometime needed to improve the particles detection.
 
-Particles detections plugins availeble in **napari-stracking** are:
+Particles detections plugins available in **napari-stracking** are:
 
 .. raw:: html
 
@@ -45,16 +47,16 @@ Particles detections plugins availeble in **napari-stracking** are:
    <summary><a>S Detector DoG</a></summary>
 
 The Difference of Gaussian (DoG) detector enhance spots in images by calculated a filtered image which is the difference
-between two versions of the image filtered with a gaussian filter with different sigmas
+between two versions of the image filtered with a gaussian filter with different sigmas (width)
 [`wiki DoG <https://en.wikipedia.org/wiki/Difference_of_Gaussians>`_].
 The *S Detector DoG* plugin uses the implementation from `skimage DoG <https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_dog>`_
 
-We start the *S Detector DoG* by opening *Plugins>Add Dock Widget>napari-stracking>S Detector DoG*
+We start the *S Detector DoG* by opening *Plugins>napari-stracking>S Detector DoG*
 
 .. image:: images/sdogdetector.png
    :width: 600
 
-The input is an image layer. If only one image layer is opened in Napari, it is automatically selected. Otherwise,
+The input is an image layer. If only one image layer is opened in napari, it is automatically selected. Otherwise,
 we select the image layer we want to process.
 The *S Detector DoG* plugin has 3 parameters:
 
@@ -78,17 +80,17 @@ The *S Detector DoG* plugin has 3 parameters:
    <details>
    <summary><a>S Detector DoH </a></summary>
 
-The Determinant of Hessian (DoH) detector is a multiscale spot detector that uses the determinant of the hessian matrix
+The Determinant of Hessian (DoH) detector is a multi-scale spot detector that uses the determinant of the hessian matrix
 of the input image
 [`wiki DoH <https://en.wikipedia.org/wiki/Blob_detection#The_determinant_of_the_Hessian>`_].
 The *S Detector DoH* plugin uses the implementation from `skimage DoH <https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_doh>`_
 
-We start the *S Detector DoH* by opening *Plugins>Add Dock Widget>napari-stracking>S Detector DoH*
+We start the *S Detector DoH* by opening *Plugins>napari-stracking>S Detector DoH*
 
 .. image:: images/sdohdetector.png
    :width: 600
 
-The input is an image layer. If only one image layer is opened in Napari, it is automatically selected. Otherwise,
+The input is an image layer. If only one image layer is opened in napari, it is automatically selected. Otherwise,
 we select the image layer we want to process.
 The *S Detector DoH* plugin has 4 parameters:
 
@@ -120,12 +122,12 @@ image filtered with a Gaussian filter to enhance spots. The scale is determined 
 [`wiki LoG <https://en.wikipedia.org/wiki/Blob_detection#The_Laplacian_of_Gaussian>`_].
 The *S Detector LoG* plugin uses the implementation for `skimage LoG <https://scikit-image.org/docs/dev/api/skimage.feature.html#skimage.feature.blob_log>`_
 
-To start the *S Detector LoG* open *Plugins>Add Dock Widget>napari-stracking>S Detector LoG*
+To start the *S Detector LoG* open *Plugins>napari-stracking>S Detector LoG*
 
 .. image:: images/slogdetector.png
    :width: 600
 
-The input is an image layer. If only one image layer is opened in Napari, it is automatically selected. Otherwise,
+The input is an image layer. If only one image layer is opened in napari, it is automatically selected. Otherwise,
 we select the image layer we want to process.
 The *S Detector LoG* plugin has 4 parameters:
 
@@ -147,6 +149,23 @@ The *S Detector LoG* plugin has 4 parameters:
    </details>
 
 
+.. raw:: html
+
+   <details>
+   <summary><a>S Detector Seg</a></summary>
+
+    When we need to track objects that are larger than spots (for example cells), it is often a better strategy to use a segmentation algorithm in order to
+    obtain a object mask or labels image and then track the object centroids. The *S Detector Seg* plugin allows to extract the centroids of
+    of each object from a segmentation mask (or labels) and convert these centroids to STracking detections:
+
+.. image:: images/ssegdetector_res.png
+   :width: 600
+
+
+.. raw:: html
+
+   </details>
+
 Particles properties
 --------------------
 
@@ -154,7 +173,7 @@ The particles properties plugin allows to calculate properties of each particles
 step is not mandatory, but can be very useful for the tracks analysis depending on the scientific application. To ease
 the properties calculation, all the properties are grouped in a single plugin called *S Particles Properties*.
 
-To open the particles properties plugin, open the plugin: *Plugins>Add Dock Widget>napari-stracking>S Detector DoG*
+To open the particles properties plugin, open the plugin: *Plugins>napari-stracking>S Detector DoG*
 
 .. image:: images/sparticlesproperties.png
    :width: 600
@@ -169,7 +188,7 @@ then click on the *Add* button. The feature appears in the panel. In this exampl
 that needs one parameter: *Radius*. It is the radius used to calculate the particles intensity features. In this example
 we then set radius to 2.5 since it is the average radius of our particles. We can then click on *Run*.
 
-When the run is finished, there is no new layer in Napari since it is the input points layer that is updated. To
+When the run is finished, there is no new layer in napari since it is the input points layer that is updated. To
 visualize the particles properties, we click on the *particles features* button:
 
 .. image:: images/sparticlesproperties_res.png
@@ -192,7 +211,7 @@ First, a connection graph is created to connect all the neighboring particles of
 iteratively estimates the optimal trajectories by applying a shortest path algorithms with a graph pruning strategy. The
 result is a set of trajectories. This tracker cannot handle split/merge events.
 
-To open the *S Linker Shortest Path* plugin, open the plugin: *Plugins>Add Dock Widget>napari-stracking>S Linker Shortest Path*
+To open the *S Linker Shortest Path* plugin, open the plugin: *Plugins>napari-stracking>S Linker Shortest Path*
 
 .. image:: images/slinkershortestpath_res.png
    :width: 600
@@ -215,9 +234,9 @@ We then click, *Run* and when the processing is finished, we have a new layer wi
 Tracks features
 ---------------
 
-The tracks features extraction plugin allows to measure feature of trajectories like length, distance... This
+The tracks features extraction plugin allows to measure features of trajectories like length, distance... This
 step is not mandatory, but very useful for the tracks analysis depending on the scientific application. To ease the
-tracks features calculation, all the features are grouped in a single plugin called *S Tracks Feature*.
+tracks features calculation, all the features are grouped in a single plugin called *S Tracks Features*.
 
 .. image:: images/stracksfeatures.png
    :width: 600
@@ -246,15 +265,15 @@ tracking pipeline. For example they can be tracks of not moving object which are
 applications. the *S Filter Tracks* plugins is a post processing plugin that aims at removing tracks with
 *unrealistic* properties (false positive).
 
-To open the *S Filter Tracks* plugin, open the plugin: *Plugins>Add Dock Widget>napari-stracking>S Filter Tracks*
+To open the *S Filter Tracks* plugin, open the plugin: *Plugins>napari-stracking>S Filter Tracks*
 
 .. image:: images/sfiltertracks.png
    :width: 600
 
 The input, is the layer containing the tracks. We can then select the features we want to filter with. In our fake
-example we want here to remove the track with a *Distance* above to 60 pixels. To do so, we select the distance feature
+example we want here to remove the track with a *Distance* above 60 pixels. To do so, we select the distance feature
 and set a minimum value of 0, and a maximum value of 60. We then click *Run*. When it finished we have a new layer with
-only 2 tracks since the tracks with a *Distance* above to 60 pixels has been removed:
+only 2 tracks since the tracks with a *Distance* above 60 pixels has been removed:
 
 .. image:: images/sfiltertracks_res.png
    :width: 600
