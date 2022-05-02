@@ -44,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="help.html">Getting Help</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#plugin-interface">Plugin Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._scale_plugin">Plugin to change a layer scale</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._reader_plugin">Plugins for import and export</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._sdetection_plugins">Detection plugins</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._sproperties_plugins">Properties plugins</a></li>
@@ -250,16 +251,11 @@ from the plugin widget interface (SNapariWidget)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._splugin.SProgressObserver">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._splugin.</span></span><span class="sig-name descname"><span class="pre">SProgressObserver</span></span><a class="headerlink" href="#napari_stracking._splugin.SProgressObserver" title="Permalink to this definition"></a></dt>
-<dd><dl class="py method">
+<dd><p>Implement the STRacking observer design pattern to display STracking tools progress</p>
+<dl class="py method">
 <dt class="sig sig-object py" id="napari_stracking._splugin.SProgressObserver.notify">
 <span class="sig-name descname"><span class="pre">notify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SProgressObserver.notify" title="Permalink to this definition"></a></dt>
 <dd><p>Callback to notify a new log message</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="napari_stracking._splugin.SProgressObserver.notify_signal">
-<span class="sig-name descname"><span class="pre">notify_signal</span></span><a class="headerlink" href="#napari_stracking._splugin.SProgressObserver.notify_signal" title="Permalink to this definition"></a></dt>
-<dd><p>Implement the STRacking observer design pattern to display STracking tools progress</p>
 </dd></dl>
 
 <dl class="py method">
@@ -271,16 +267,65 @@ from the plugin widget interface (SNapariWidget)</p>
 </dd></dl>
 
 </section>
+<section id="module-napari_stracking._scale_plugin">
+<span id="plugin-to-change-a-layer-scale"></span><h2>Plugin to change a layer scale<a class="headerlink" href="#module-napari_stracking._scale_plugin" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._scale_plugin.SScale">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._scale_plugin.</span></span><span class="sig-name descname"><span class="pre">SScale</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._scale_plugin.SScale" title="Permalink to this definition"></a></dt>
+<dd><p>Napari plugin to change a layer scale</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._scale_plugin.SScale.changed_layer">
+<span class="sig-name descname"><span class="pre">changed_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._scale_plugin.SScale.changed_layer" title="Permalink to this definition"></a></dt>
+<dd><p>Update the plugin widget when the selected layer has changed</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._scale_plugin.SScale.update_scale">
+<span class="sig-name descname"><span class="pre">update_scale</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._scale_plugin.SScale.update_scale" title="Permalink to this definition"></a></dt>
+<dd><p>Update the scale in the napari layer</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-napari_stracking._reader_plugin">
 <span id="plugins-for-import-and-export"></span><h2>Plugins for import and export<a class="headerlink" href="#module-napari_stracking._reader_plugin" title="Permalink to this headline"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._reader_plugin.SLoad">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._reader_plugin.</span></span><span class="sig-name descname"><span class="pre">SLoad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._reader_plugin.SLoad" title="Permalink to this definition"></a></dt>
-<dd><p>Dock widget to read tracks</p>
+<dd><p>Plugin to read particles and tracks from files</p>
 <dl class="simple">
 <dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._reader_plugin.SLoad.browse_particles">
+<span class="sig-name descname"><span class="pre">browse_particles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._reader_plugin.SLoad.browse_particles" title="Permalink to this definition"></a></dt>
+<dd><p>Callback called when the browse particles button is clicked</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._reader_plugin.SLoad.browse_tracks">
+<span class="sig-name descname"><span class="pre">browse_tracks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._reader_plugin.SLoad.browse_tracks" title="Permalink to this definition"></a></dt>
+<dd><p>Callback called when the browse tracks button is clicked</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._reader_plugin.SLoad.load_particles">
+<span class="sig-name descname"><span class="pre">load_particles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._reader_plugin.SLoad.load_particles" title="Permalink to this definition"></a></dt>
+<dd><p>Method that implements the particles loading</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._reader_plugin.SLoad.load_tracks">
+<span class="sig-name descname"><span class="pre">load_tracks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._reader_plugin.SLoad.load_tracks" title="Permalink to this definition"></a></dt>
+<dd><p>Method that implements the tracks loading</p>
+</dd></dl>
+
 </dd></dl>
 
 <span class="target" id="module-napari_stracking._export_plugin"></span><dl class="py class">
@@ -626,7 +671,7 @@ from the plugin widget interface (SNapariWidget)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._sproperties_plugins.SParticlesProperties">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sproperties_plugins.</span></span><span class="sig-name descname"><span class="pre">SParticlesProperties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_plugins.SParticlesProperties" title="Permalink to this definition"></a></dt>
-<dd><p>Dock widget to calculate spot properties</p>
+<dd><p>Plugin to calculate particles properties</p>
 <dl class="simple">
 <dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
 </dd>
@@ -636,12 +681,28 @@ from the plugin widget interface (SNapariWidget)</p>
 <span class="target" id="module-napari_stracking._sproperties_workers"></span><dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SIntensityPropertyWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sproperties_workers.</span></span><span class="sig-name descname"><span class="pre">SIntensityPropertyWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_plugin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SIntensityPropertyWidget" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Widget for the intensity property inputs</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SIntensityPropertyWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SIntensityPropertyWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the widget user inputs</p>
+<p>True is the inputs are correct, False if at least one input is not correct</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SIntensityPropertyWidget.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SIntensityPropertyWidget.parameters" title="Permalink to this definition"></a></dt>
+<dd><p>Get the parameters values (state)</p>
+<p>dict: a dictionary with the inputs values</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sproperties_workers.</span></span><span class="sig-name descname"><span class="pre">SSpotPropertiesWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWidget" title="Permalink to this definition"></a></dt>
-<dd><dl class="py method">
+<dd><p>Widget for the particles properties plugin</p>
+<dl class="py method">
 <dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWidget.check_inputs">
 <span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWidget.check_inputs" title="Permalink to this definition"></a></dt>
 <dd><p>Check the user input in this widget</p>
@@ -656,6 +717,12 @@ from the plugin widget interface (SNapariWidget)</p>
 <dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWidget.init_layer_list">
 <span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWidget.init_layer_list" title="Permalink to this definition"></a></dt>
 <dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWidget.show_properties">
+<span class="sig-name descname"><span class="pre">show_properties</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWidget.show_properties" title="Permalink to this definition"></a></dt>
+<dd><p>reload and display the particles properties in a popup window</p>
 </dd></dl>
 
 <dl class="py method">
@@ -693,10 +760,17 @@ from the plugin widget interface (SNapariWidget)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWorker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sproperties_workers.</span></span><span class="sig-name descname"><span class="pre">SSpotPropertiesWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWorker" title="Permalink to this definition"></a></dt>
-<dd><dl class="py method">
+<dd><p>Worker fot the particles properties plugin</p>
+<dl class="py method">
 <dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWorker.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWorker.run" title="Permalink to this definition"></a></dt>
 <dd><p>Execute the processing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWorker.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWorker.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>“set the calculated properties to a new napari layer</p>
 </dd></dl>
 
 </dd></dl>
@@ -707,7 +781,7 @@ from the plugin widget interface (SNapariWidget)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._slinking_plugins.SLinkerNearestNeighbor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_plugins.</span></span><span class="sig-name descname"><span class="pre">SLinkerNearestNeighbor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_plugins.SLinkerNearestNeighbor" title="Permalink to this definition"></a></dt>
-<dd><p>Dock widget to link detections using the nearest neighbor algorithm</p>
+<dd><p>Plugin to link detections using the nearest neighbor algorithm</p>
 <dl class="simple">
 <dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
 </dd>
@@ -717,7 +791,7 @@ from the plugin widget interface (SNapariWidget)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._slinking_plugins.SLinkerShortestPath">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_plugins.</span></span><span class="sig-name descname"><span class="pre">SLinkerShortestPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_plugins.SLinkerShortestPath" title="Permalink to this definition"></a></dt>
-<dd><p>Dock widget to calculate spot properties</p>
+<dd><p>Plugin to link detections using the shortest path algorithm</p>
 <dl class="simple">
 <dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
 </dd>
@@ -781,12 +855,19 @@ from the plugin widget interface (SNapariWidget)</p>
 <dd><p>Execute the processing</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerNearestNeighborWorker.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerNearestNeighborWorker.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Set the linker tracks to a new napari layer</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_workers.</span></span><span class="sig-name descname"><span class="pre">SLinkerShortestPathWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWidget" title="Permalink to this definition"></a></dt>
-<dd><dl class="py method">
+<dd><p>Widget for the shortest path linker plugin</p>
+<dl class="py method">
 <dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWidget.check_inputs">
 <span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWidget.check_inputs" title="Permalink to this definition"></a></dt>
 <dd><p>Check the user input in this widget</p>
@@ -832,10 +913,17 @@ from the plugin widget interface (SNapariWidget)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWorker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_workers.</span></span><span class="sig-name descname"><span class="pre">SLinkerShortestPathWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWorker" title="Permalink to this definition"></a></dt>
-<dd><dl class="py method">
+<dd><p>Worker for the shortest path linker plugin</p>
+<dl class="py method">
 <dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWorker.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWorker.run" title="Permalink to this definition"></a></dt>
 <dd><p>Execute the processing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWorker.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWorker.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Set the calculated tracks to a new napari layer</p>
 </dd></dl>
 
 </dd></dl>
@@ -940,6 +1028,12 @@ from the plugin widget interface (SNapariWidget)</p>
 <dd><p>Execute the processing</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.STracksFeaturesWorker.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sfeatures_workers.STracksFeaturesWorker.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Set the output features in a new napari layer</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -948,7 +1042,7 @@ from the plugin widget interface (SNapariWidget)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._strackfilter_plugins.SFilterTrack">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._strackfilter_plugins.</span></span><span class="sig-name descname"><span class="pre">SFilterTrack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_plugins.SFilterTrack" title="Permalink to this definition"></a></dt>
-<dd><p>Dock widget to link detections using the nearest neighbor algorithm</p>
+<dd><p>Dock widget to filter tracks</p>
 <dl class="simple">
 <dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
 </dd>
@@ -958,12 +1052,14 @@ from the plugin widget interface (SNapariWidget)</p>
 <span class="target" id="module-napari_stracking._strackfilter_workers"></span><dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.SFeatureFilterWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._strackfilter_workers.</span></span><span class="sig-name descname"><span class="pre">SFeatureFilterWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_plugin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.SFeatureFilterWidget" title="Permalink to this definition"></a></dt>
-<dd></dd></dl>
+<dd><p>Widget for the features filter plugin</p>
+</dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._strackfilter_workers.</span></span><span class="sig-name descname"><span class="pre">STrackFilterWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWidget" title="Permalink to this definition"></a></dt>
-<dd><dl class="py method">
+<dd><p>Widget for the tracks filter plugin</p>
+<dl class="py method">
 <dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWidget.check_inputs">
 <span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWidget.check_inputs" title="Permalink to this definition"></a></dt>
 <dd><p>Check the user input in this widget</p>
@@ -1015,10 +1111,17 @@ from the plugin widget interface (SNapariWidget)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWorker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._strackfilter_workers.</span></span><span class="sig-name descname"><span class="pre">STrackFilterWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWorker" title="Permalink to this definition"></a></dt>
-<dd><dl class="py method">
+<dd><p>Worker for the track filter plugin</p>
+<dl class="py method">
 <dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWorker.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWorker.run" title="Permalink to this definition"></a></dt>
 <dd><p>Execute the processing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWorker.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWorker.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Set the plugin output to a napari layer</p>
 </dd></dl>
 
 </dd></dl>

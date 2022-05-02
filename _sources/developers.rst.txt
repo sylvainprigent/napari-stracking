@@ -12,6 +12,11 @@ interface and a ``SNapariWorker`` that link the plugin widget to the STracking c
 .. automodule:: napari_stracking._splugin
    :members:
 
+Plugin to change a layer scale
+------------------------------
+
+.. automodule:: napari_stracking._scale_plugin
+   :members:
 
 Plugins for import and export
 -----------------------------
