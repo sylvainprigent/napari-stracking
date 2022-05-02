@@ -44,12 +44,12 @@
 <li class="toctree-l1"><a class="reference internal" href="help.html">Getting Help</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Developers</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#plugin-interface">Plugin Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#plugins-for-import-and-export">Plugins for import and export</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#detection-plugins">Detection plugins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#properties-plugins">Properties plugins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#linking-plugins">Linking plugins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#features-plugins">Features plugins</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#filters-plugins">Filters plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._reader_plugin">Plugins for import and export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._sdetection_plugins">Detection plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._sproperties_plugins">Properties plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._slinking_plugins">Linking plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._sfeatures_plugins">Features plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-napari_stracking._strackfilter_plugins">Filters plugins</a></li>
 </ul>
 </li>
 </ul>
@@ -86,24 +86,943 @@
 progress bar, progress log and advanced mode. To implement a new STracking plugin, developers needs
 to implement a <code class="docutils literal notranslate"><span class="pre">SNapariPlugin</span></code> class with a dedicated <code class="docutils literal notranslate"><span class="pre">SNapariWidget</span></code> for the graphical
 interface and a <code class="docutils literal notranslate"><span class="pre">SNapariWorker</span></code> that link the plugin widget to the STracking class.</p>
+<span class="target" id="module-napari_stracking._splugin"></span><dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SLogWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._splugin.</span></span><span class="sig-name descname"><span class="pre">SLogWidget</span></span><a class="headerlink" href="#napari_stracking._splugin.SLogWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget to log the STracking plugins messages in the graphical interface</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SLogWidget.add_log">
+<span class="sig-name descname"><span class="pre">add_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SLogWidget.add_log" title="Permalink to this definition"></a></dt>
+<dd><p>Callback to add a new message in the log area</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SLogWidget.clear_log">
+<span class="sig-name descname"><span class="pre">clear_log</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SLogWidget.clear_log" title="Permalink to this definition"></a></dt>
+<dd><p>Callback to clear all the log area</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SLogWidget.set_advanced">
+<span class="sig-name descname"><span class="pre">set_advanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SLogWidget.set_advanced" title="Permalink to this definition"></a></dt>
+<dd><p>Show hide the log area depending on the plugin mode</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SLogWidget.set_progress">
+<span class="sig-name descname"><span class="pre">set_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SLogWidget.set_progress" title="Permalink to this definition"></a></dt>
+<dd><p>Callback to update the progress bar</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariPlugin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._splugin.</span></span><span class="sig-name descname"><span class="pre">SNapariPlugin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariPlugin" title="Permalink to this definition"></a></dt>
+<dd><p>Definition of a STracking napari widget</p>
+<p>To create a new plugin, simply create a new class that inherit from
+SNapariPlugin and instantiate self.worker, self.widget and call init_ui in the
+constructor.</p>
+<p>The SNapariPlugin purpose is to implement a default run button and log widget for all STracking
+plugins and provide a run method that start the worker in a separate thread</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>worker: SNapariWorker</dt><dd><p>Instance of the plugin worker</p>
+</dd>
+<dt>widget: SNapariWidget</dt><dd><p>Instance of the plugin widget</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariPlugin.init_ui">
+<span class="sig-name descname"><span class="pre">init_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariPlugin.init_ui" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the plugin graphical interface</p>
+<p>The plugin interface add a run button and a log widget to the plugin (SNapariWidget) widget</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariPlugin.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariPlugin.run" title="Permalink to this definition"></a></dt>
+<dd><p>Start the worker in a new thread</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariPlugin.set_advanced">
+<span class="sig-name descname"><span class="pre">set_advanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariPlugin.set_advanced" title="Permalink to this definition"></a></dt>
+<dd><p>Toggle the graphical interface to advanced mode</p>
+<dl class="simple">
+<dt>mode: bool</dt><dd><p>True to set mode to advanced, False to set mode to default</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariPlugin.set_enable">
+<span class="sig-name descname"><span class="pre">set_enable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariPlugin.set_enable" title="Permalink to this definition"></a></dt>
+<dd><p>Callback called to disable the run button when the inputs layers are not available</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariPlugin.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariPlugin.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Call the worker set_outputs method to set the plugin outputs to napari layers</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._splugin.</span></span><span class="sig-name descname"><span class="pre">SNapariWidget</span></span><a class="headerlink" href="#napari_stracking._splugin.SNapariWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Interface for a STracking napari widget</p>
+<p>This interface implements three methods
+- show_error: to display a user input error
+- check_inputs (abstract): to check all the user input from the plugin widget
+- state (abstract): to get the plugin widget state, ie the user inputs values set in the widget</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariWidget.show_error">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">show_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariWidget.show_error" title="Permalink to this definition"></a></dt>
+<dd><p>Display an error message in a QMessage box</p>
+<dl class="simple">
+<dt>message: str</dt><dd><p>Error message</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._splugin.</span></span><span class="sig-name descname"><span class="pre">SNapariWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariWorker" title="Permalink to this definition"></a></dt>
+<dd><p>Interface for a STracking napari plugin</p>
+<p>The worker is an object that run the calculation (using the run method) using the user inputs
+from the plugin widget interface (SNapariWidget)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Exec the data processing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SNapariWorker.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SNapariWorker.state" title="Permalink to this definition"></a></dt>
+<dd><p>Get the states from the SNapariWidget</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SProgressObserver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._splugin.</span></span><span class="sig-name descname"><span class="pre">SProgressObserver</span></span><a class="headerlink" href="#napari_stracking._splugin.SProgressObserver" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SProgressObserver.notify">
+<span class="sig-name descname"><span class="pre">notify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SProgressObserver.notify" title="Permalink to this definition"></a></dt>
+<dd><p>Callback to notify a new log message</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SProgressObserver.notify_signal">
+<span class="sig-name descname"><span class="pre">notify_signal</span></span><a class="headerlink" href="#napari_stracking._splugin.SProgressObserver.notify_signal" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the STRacking observer design pattern to display STracking tools progress</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._splugin.SProgressObserver.progress">
+<span class="sig-name descname"><span class="pre">progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._splugin.SProgressObserver.progress" title="Permalink to this definition"></a></dt>
+<dd><p>Callback to refresh the computation progress</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="plugins-for-import-and-export">
-<h2>Plugins for import and export<a class="headerlink" href="#plugins-for-import-and-export" title="Permalink to this headline"></a></h2>
+<section id="module-napari_stracking._reader_plugin">
+<span id="plugins-for-import-and-export"></span><h2>Plugins for import and export<a class="headerlink" href="#module-napari_stracking._reader_plugin" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._reader_plugin.SLoad">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._reader_plugin.</span></span><span class="sig-name descname"><span class="pre">SLoad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._reader_plugin.SLoad" title="Permalink to this definition"></a></dt>
+<dd><p>Dock widget to read tracks</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-napari_stracking._export_plugin"></span><dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._export_plugin.SExport">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._export_plugin.</span></span><span class="sig-name descname"><span class="pre">SExport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._export_plugin.SExport" title="Permalink to this definition"></a></dt>
+<dd><p>Dock widget to export particles and tracks</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="detection-plugins">
-<h2>Detection plugins<a class="headerlink" href="#detection-plugins" title="Permalink to this headline"></a></h2>
+<section id="module-napari_stracking._sdetection_plugins">
+<span id="detection-plugins"></span><h2>Detection plugins<a class="headerlink" href="#module-napari_stracking._sdetection_plugins" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_plugins.SDetectorDog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_plugins.</span></span><span class="sig-name descname"><span class="pre">SDetectorDog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_plugins.SDetectorDog" title="Permalink to this definition"></a></dt>
+<dd><p>Napari plugin for DoG detection</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_plugins.SDetectorDoh">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_plugins.</span></span><span class="sig-name descname"><span class="pre">SDetectorDoh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_plugins.SDetectorDoh" title="Permalink to this definition"></a></dt>
+<dd><p>Napari plugin for DoH detection</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_plugins.SDetectorLog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_plugins.</span></span><span class="sig-name descname"><span class="pre">SDetectorLog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_plugins.SDetectorLog" title="Permalink to this definition"></a></dt>
+<dd><p>Napari plugin for LoG detection</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_plugins.SDetectorSeg">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_plugins.</span></span><span class="sig-name descname"><span class="pre">SDetectorSeg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_plugins.SDetectorSeg" title="Permalink to this definition"></a></dt>
+<dd><p>Napari plugin for detection from segmentation map</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-napari_stracking._sdetection_workers"></span><dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDogWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_workers.</span></span><span class="sig-name descname"><span class="pre">SDogWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDogWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget for the DoG detector plugins</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDogWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDogWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDogWidget.init_layer_list">
+<span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDogWidget.init_layer_list" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDogWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDogWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDogWidget.toggle_advanced">
+<span class="sig-name descname"><span class="pre">toggle_advanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDogWidget.toggle_advanced" title="Permalink to this definition"></a></dt>
+<dd><p>Change the parameters widget to advanced mode</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDogWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_workers.</span></span><span class="sig-name descname"><span class="pre">SDogWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDogWorker" title="Permalink to this definition"></a></dt>
+<dd><p>Worker for the DoG detector plugins</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDogWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDogWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the processing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDogWorker.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDogWorker.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Set the plugin outputs to napari layers</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDohWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_workers.</span></span><span class="sig-name descname"><span class="pre">SDohWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDohWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget for the DoH detector plugins</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDohWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDohWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDohWidget.init_layer_list">
+<span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDohWidget.init_layer_list" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDohWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDohWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDohWidget.toggle_advanced">
+<span class="sig-name descname"><span class="pre">toggle_advanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDohWidget.toggle_advanced" title="Permalink to this definition"></a></dt>
+<dd><p>Change the parameters widget to advanced mode</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDohWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_workers.</span></span><span class="sig-name descname"><span class="pre">SDohWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDohWorker" title="Permalink to this definition"></a></dt>
+<dd><p>Worker for the DoH detector plugins</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDohWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDohWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the processing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SDohWorker.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SDohWorker.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Set the plugin outputs to napari layers</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SLogWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_workers.</span></span><span class="sig-name descname"><span class="pre">SLogWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SLogWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget for the LoG detector plugins</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SLogWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SLogWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SLogWidget.init_layer_list">
+<span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SLogWidget.init_layer_list" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SLogWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stracking._sdetection_workers.SLogWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SLogWidget.toggle_advanced">
+<span class="sig-name descname"><span class="pre">toggle_advanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SLogWidget.toggle_advanced" title="Permalink to this definition"></a></dt>
+<dd><p>Change the parameters widget to advanced mode</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SLogWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_workers.</span></span><span class="sig-name descname"><span class="pre">SLogWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SLogWorker" title="Permalink to this definition"></a></dt>
+<dd><p>Worker for the LoG detector plugins</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SLogWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SLogWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the processing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SLogWorker.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SLogWorker.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Set the plugin outputs to napari layers</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SSegWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_workers.</span></span><span class="sig-name descname"><span class="pre">SSegWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SSegWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget for the Seg detector plugins</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SSegWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SSegWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SSegWidget.init_layer_list">
+<span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SSegWidget.init_layer_list" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SSegWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stracking._sdetection_workers.SSegWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SSegWidget.toggle_advanced">
+<span class="sig-name descname"><span class="pre">toggle_advanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SSegWidget.toggle_advanced" title="Permalink to this definition"></a></dt>
+<dd><p>Change the parameters widget to advanced mode</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SSegWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sdetection_workers.</span></span><span class="sig-name descname"><span class="pre">SSegWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SSegWorker" title="Permalink to this definition"></a></dt>
+<dd><p>Worker for the Seg detector plugins</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SSegWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SSegWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the processing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sdetection_workers.SSegWorker.set_outputs">
+<span class="sig-name descname"><span class="pre">set_outputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sdetection_workers.SSegWorker.set_outputs" title="Permalink to this definition"></a></dt>
+<dd><p>Set the plugin outputs to napari layers</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="properties-plugins">
-<h2>Properties plugins<a class="headerlink" href="#properties-plugins" title="Permalink to this headline"></a></h2>
+<section id="module-napari_stracking._sproperties_plugins">
+<span id="properties-plugins"></span><h2>Properties plugins<a class="headerlink" href="#module-napari_stracking._sproperties_plugins" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_plugins.SParticlesProperties">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sproperties_plugins.</span></span><span class="sig-name descname"><span class="pre">SParticlesProperties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_plugins.SParticlesProperties" title="Permalink to this definition"></a></dt>
+<dd><p>Dock widget to calculate spot properties</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-napari_stracking._sproperties_workers"></span><dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SIntensityPropertyWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sproperties_workers.</span></span><span class="sig-name descname"><span class="pre">SIntensityPropertyWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent_plugin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SIntensityPropertyWidget" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sproperties_workers.</span></span><span class="sig-name descname"><span class="pre">SSpotPropertiesWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWidget" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWidget.init_layer_list">
+<span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWidget.init_layer_list" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWidget.toggle_advanced">
+<span class="sig-name descname"><span class="pre">toggle_advanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWidget.toggle_advanced" title="Permalink to this definition"></a></dt>
+<dd><p>Change the parameters widget to advanced mode</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sproperties_workers.</span></span><span class="sig-name descname"><span class="pre">SSpotPropertiesWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWorker" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sproperties_workers.SSpotPropertiesWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sproperties_workers.SSpotPropertiesWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the processing</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="linking-plugins">
-<h2>Linking plugins<a class="headerlink" href="#linking-plugins" title="Permalink to this headline"></a></h2>
+<section id="module-napari_stracking._slinking_plugins">
+<span id="linking-plugins"></span><h2>Linking plugins<a class="headerlink" href="#module-napari_stracking._slinking_plugins" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._slinking_plugins.SLinkerNearestNeighbor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_plugins.</span></span><span class="sig-name descname"><span class="pre">SLinkerNearestNeighbor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_plugins.SLinkerNearestNeighbor" title="Permalink to this definition"></a></dt>
+<dd><p>Dock widget to link detections using the nearest neighbor algorithm</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._slinking_plugins.SLinkerShortestPath">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_plugins.</span></span><span class="sig-name descname"><span class="pre">SLinkerShortestPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_plugins.SLinkerShortestPath" title="Permalink to this definition"></a></dt>
+<dd><p>Dock widget to calculate spot properties</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-napari_stracking._slinking_workers"></span><dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerNearestNeighborWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_workers.</span></span><span class="sig-name descname"><span class="pre">SLinkerNearestNeighborWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerNearestNeighborWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget for the linker nearest neighbor plugin</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerNearestNeighborWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerNearestNeighborWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerNearestNeighborWidget.init_layer_list">
+<span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerNearestNeighborWidget.init_layer_list" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerNearestNeighborWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerNearestNeighborWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerNearestNeighborWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_workers.</span></span><span class="sig-name descname"><span class="pre">SLinkerNearestNeighborWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerNearestNeighborWorker" title="Permalink to this definition"></a></dt>
+<dd><p>Worker for the linker nearest neighbor plugin</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerNearestNeighborWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerNearestNeighborWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the processing</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_workers.</span></span><span class="sig-name descname"><span class="pre">SLinkerShortestPathWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWidget" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWidget.init_layer_list">
+<span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWidget.init_layer_list" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._slinking_workers.</span></span><span class="sig-name descname"><span class="pre">SLinkerShortestPathWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWorker" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._slinking_workers.SLinkerShortestPathWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._slinking_workers.SLinkerShortestPathWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the processing</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="features-plugins">
-<h2>Features plugins<a class="headerlink" href="#features-plugins" title="Permalink to this headline"></a></h2>
+<section id="module-napari_stracking._sfeatures_plugins">
+<span id="features-plugins"></span><h2>Features plugins<a class="headerlink" href="#module-napari_stracking._sfeatures_plugins" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_plugins.STracksFeatures">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sfeatures_plugins.</span></span><span class="sig-name descname"><span class="pre">STracksFeatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sfeatures_plugins.STracksFeatures" title="Permalink to this definition"></a></dt>
+<dd><p>Plugin to calculate tracks features</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-napari_stracking._sfeatures_workers"></span><dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.SDisplacementFeatureWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sfeatures_workers.</span></span><span class="sig-name descname"><span class="pre">SDisplacementFeatureWidget</span></span><a class="headerlink" href="#napari_stracking._sfeatures_workers.SDisplacementFeatureWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget for the displacement feature</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.SDistanceFeatureWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sfeatures_workers.</span></span><span class="sig-name descname"><span class="pre">SDistanceFeatureWidget</span></span><a class="headerlink" href="#napari_stracking._sfeatures_workers.SDistanceFeatureWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget for the distance feature</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.SLengthFeatureWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sfeatures_workers.</span></span><span class="sig-name descname"><span class="pre">SLengthFeatureWidget</span></span><a class="headerlink" href="#napari_stracking._sfeatures_workers.SLengthFeatureWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget for the length feature</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.STracksFeaturesWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sfeatures_workers.</span></span><span class="sig-name descname"><span class="pre">STracksFeaturesWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sfeatures_workers.STracksFeaturesWidget" title="Permalink to this definition"></a></dt>
+<dd><p>Widget for the tracks features plugins</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.STracksFeaturesWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sfeatures_workers.STracksFeaturesWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.STracksFeaturesWidget.init_layer_list">
+<span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sfeatures_workers.STracksFeaturesWidget.init_layer_list" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.STracksFeaturesWidget.show_features">
+<span class="sig-name descname"><span class="pre">show_features</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sfeatures_workers.STracksFeaturesWidget.show_features" title="Permalink to this definition"></a></dt>
+<dd><p>Method to call to force the features table display</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.STracksFeaturesWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stracking._sfeatures_workers.STracksFeaturesWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.STracksFeaturesWidget.toggle_advanced">
+<span class="sig-name descname"><span class="pre">toggle_advanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sfeatures_workers.STracksFeaturesWidget.toggle_advanced" title="Permalink to this definition"></a></dt>
+<dd><p>Change the parameters widget to advanced mode</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.STracksFeaturesWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._sfeatures_workers.</span></span><span class="sig-name descname"><span class="pre">STracksFeaturesWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sfeatures_workers.STracksFeaturesWorker" title="Permalink to this definition"></a></dt>
+<dd><p>Worker fot the tracks features plugin</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._sfeatures_workers.STracksFeaturesWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._sfeatures_workers.STracksFeaturesWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the processing</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="filters-plugins">
-<h2>Filters plugins<a class="headerlink" href="#filters-plugins" title="Permalink to this headline"></a></h2>
+<section id="module-napari_stracking._strackfilter_plugins">
+<span id="filters-plugins"></span><h2>Filters plugins<a class="headerlink" href="#module-napari_stracking._strackfilter_plugins" title="Permalink to this headline"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_plugins.SFilterTrack">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._strackfilter_plugins.</span></span><span class="sig-name descname"><span class="pre">SFilterTrack</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_plugins.SFilterTrack" title="Permalink to this definition"></a></dt>
+<dd><p>Dock widget to link detections using the nearest neighbor algorithm</p>
+<dl class="simple">
+<dt>napari_viewer: Viewer</dt><dd><p>Napari viewer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-napari_stracking._strackfilter_workers"></span><dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.SFeatureFilterWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._strackfilter_workers.</span></span><span class="sig-name descname"><span class="pre">SFeatureFilterWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_plugin</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.SFeatureFilterWidget" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._strackfilter_workers.</span></span><span class="sig-name descname"><span class="pre">STrackFilterWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWidget" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWidget.check_inputs">
+<span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWidget.check_inputs" title="Permalink to this definition"></a></dt>
+<dd><p>Check the user input in this widget</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>True if no error, False if at least one input contains an error.
+(ex not well writen number)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWidget.init_layer_list">
+<span class="sig-name descname"><span class="pre">init_layer_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWidget.init_layer_list" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the layers lists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWidget.state">
+<span class="sig-name descname"><span class="pre">state</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWidget.state" title="Permalink to this definition"></a></dt>
+<dd><p>Return the current state of the widget</p>
+<p>The state in inputs values displayed in the the widget. Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;SDoGDetector&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;inputs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_layer_box</span><span class="o">.</span><span class="n">currentText</span><span class="p">()},</span>
+ <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;min_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;max_sigma&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_sigma_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;threshold&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;sigma_ratio&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sigma_ratio_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;overlap&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_overlap_value</span><span class="o">.</span><span class="n">text</span><span class="p">()),</span>
+                <span class="s1">&#39;current_frame&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_frame_check</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+                <span class="p">},</span>
+ <span class="s1">&#39;outputs&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;points&#39;</span><span class="p">,</span> <span class="s1">&#39;DoG detections&#39;</span><span class="p">]</span>
+ <span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>dict: a dictionary containing the widget inputs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWidget.toggle_advanced">
+<span class="sig-name descname"><span class="pre">toggle_advanced</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWidget.toggle_advanced" title="Permalink to this definition"></a></dt>
+<dd><p>Change the parameters widget to advanced mode</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWorker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">napari_stracking._strackfilter_workers.</span></span><span class="sig-name descname"><span class="pre">STrackFilterWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">napari_viewer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWorker" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="napari_stracking._strackfilter_workers.STrackFilterWorker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#napari_stracking._strackfilter_workers.STrackFilterWorker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the processing</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
