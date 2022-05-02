@@ -41,9 +41,9 @@ class SNapariWidget(QWidget):
     def check_inputs(self):
         """Check the user input in this widget
 
-        Returns
-        -------
-        True if no error, False if at least one input contains an error. (ex not well writen number)
+        Returns:
+            True if no error, False if at least one input contains an error.
+            (ex not well writen number)
 
         """
         raise NotImplementedError()
@@ -68,9 +68,8 @@ class SNapariWidget(QWidget):
              'outputs': ['points', 'DoG detections']
              }
 
-        Returns
-        -------
-        Returns a dictionary containing the widget inputs
+        Returns:
+            dict: a dictionary containing the widget inputs
 
         """
         raise NotImplementedError()
