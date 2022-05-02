@@ -50,7 +50,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'napari-stracking'
-copyright = u'2015, Sylvain Prigent'
+copyright = u'2021, STracking'
 author = u'Sylvain Prigent'
 
 # The version info for the project you're documenting, acts as replacement for

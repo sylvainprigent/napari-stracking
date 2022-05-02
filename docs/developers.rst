@@ -9,7 +9,7 @@ progress bar, progress log and advanced mode. To implement a new STracking plugi
 to implement a ``SNapariPlugin`` class with a dedicated ``SNapariWidget`` for the graphical
 interface and a ``SNapariWorker`` that link the plugin widget to the STracking class.
 
-.. automodule:: napari_stracking._splugin
+.. automodule:: ._splugin
    :members:
 
 
