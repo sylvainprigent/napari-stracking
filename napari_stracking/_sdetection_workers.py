@@ -11,6 +11,7 @@ from stracking.detectors import (DoGDetector, DoHDetector, LoGDetector, SSegDete
 
 # ---------------- DoG ----------------
 class SDogWidget(SNapariWidget):
+    """Widget for the DoG detector plugins"""
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -57,10 +58,10 @@ class SDogWidget(SNapariWidget):
         layout.addWidget(self._overlap_label, 7, 0)
         layout.addWidget(self._overlap_value, 7, 1)
         self.setLayout(layout)
-        #self.init_layer_list()
         self.toggle_advanced(False)
 
     def init_layer_list(self):
+        """Initialize the layers lists"""
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.image.image.Image):
                 self._input_layer_box.addItem(layer.name)
@@ -71,6 +72,14 @@ class SDogWidget(SNapariWidget):
             self.enable.emit(True)
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_text = self._input_layer_box.currentText()
         self._input_layer_box.clear()
         is_current_item_still_here = False
@@ -149,6 +158,7 @@ class SDogWidget(SNapariWidget):
 
 
 class SDogWorker(SNapariWorker):
+    """Worker for the DoG detector plugins"""
     def __init__(self, napari_viewer, widget):
         super().__init__(napari_viewer, widget)
 
@@ -191,6 +201,7 @@ class SDogWorker(SNapariWorker):
         self.finished.emit()
 
     def set_outputs(self):
+        """Set the plugin outputs to napari layers"""
         self.viewer.add_points(self._out_data['data'],
                                scale=self._out_data['scale'],
                                size=self._out_data['size'],
@@ -199,6 +210,7 @@ class SDogWorker(SNapariWorker):
 
 # ----------------- LoG -------------------
 class SLogWidget(SNapariWidget):
+    """Widget for the LoG detector plugins"""
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -251,10 +263,10 @@ class SLogWidget(SNapariWidget):
         layout.addWidget(self._log_scale_label, 8, 0)
         layout.addWidget(self._log_scale_value, 8, 1)
         self.setLayout(layout)
-        # self._init_layer_list()
         self.toggle_advanced(False)
 
     def init_layer_list(self):
+        """Initialize the layers lists"""
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.image.image.Image):
                 self._input_layer_box.addItem(layer.name)
@@ -265,6 +277,14 @@ class SLogWidget(SNapariWidget):
             self.enable.emit(True)
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_text = self._input_layer_box.currentText()
         self._input_layer_box.clear()
         is_current_item_still_here = False
@@ -344,6 +364,7 @@ class SLogWidget(SNapariWidget):
 
 
 class SLogWorker(SNapariWorker):
+    """Worker for the LoG detector plugins"""
     def __init__(self, napari_viewer, widget):
         super().__init__(napari_viewer, widget)
 
@@ -392,6 +413,7 @@ class SLogWorker(SNapariWorker):
         self.finished.emit()
 
     def set_outputs(self):
+        """Set the plugin outputs to napari layers"""
         self.viewer.add_points(self._out_data['data'],
                                scale=self._out_data['scale'],
                                size=self._out_data['size'],
@@ -400,6 +422,7 @@ class SLogWorker(SNapariWorker):
 
 # ------------------ DoH -------------------
 class SDohWidget(SNapariWidget):
+    """Widget for the DoH detector plugins"""
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -452,10 +475,10 @@ class SDohWidget(SNapariWidget):
         layout.addWidget(self._log_scale_label, 8, 0)
         layout.addWidget(self._log_scale_value, 8, 1)
         self.setLayout(layout)
-        # self._init_layer_list()
         self.toggle_advanced(False)
 
     def init_layer_list(self):
+        """Initialize the layers lists"""
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.image.image.Image):
                 self._input_layer_box.addItem(layer.name)
@@ -466,6 +489,14 @@ class SDohWidget(SNapariWidget):
             self.enable.emit(True)
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_text = self._input_layer_box.currentText()
         self._input_layer_box.clear()
         is_current_item_still_here = False
@@ -545,6 +576,7 @@ class SDohWidget(SNapariWidget):
 
 
 class SDohWorker(SNapariWorker):
+    """Worker for the DoH detector plugins"""
     def __init__(self, napari_viewer, widget):
         super().__init__(napari_viewer, widget)
 
@@ -591,6 +623,7 @@ class SDohWorker(SNapariWorker):
         self.finished.emit()
 
     def set_outputs(self):
+        """Set the plugin outputs to napari layers"""
         self.viewer.add_points(self._out_data['data'],
                                scale=self._out_data['scale'],
                                size=self._out_data['size'],
@@ -599,6 +632,7 @@ class SDohWorker(SNapariWorker):
 
 # ------------------ Seg -------------------
 class SSegWidget(SNapariWidget):
+    """Widget for the Seg detector plugins"""
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -629,6 +663,7 @@ class SSegWidget(SNapariWidget):
         self.toggle_advanced(False)
 
     def init_layer_list(self):
+        """Initialize the layers lists"""
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.image.image.Image):
                 self._input_layer_box.addItem(layer.name)
@@ -638,6 +673,14 @@ class SSegWidget(SNapariWidget):
             self.enable.emit(True)
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_text = self._input_layer_box.currentText()
         self._input_layer_box.clear()
         is_current_item_still_here = False
@@ -672,6 +715,7 @@ class SSegWidget(SNapariWidget):
 
 
 class SSegWorker(SNapariWorker):
+    """Worker for the Seg detector plugins"""
     def __init__(self, napari_viewer, widget):
         super().__init__(napari_viewer, widget)
 
@@ -711,6 +755,7 @@ class SSegWorker(SNapariWorker):
         self.finished.emit()
 
     def set_outputs(self):
+        """Set the plugin outputs to napari layers"""
         self.viewer.add_points(self._out_data['data'],
                                scale=self._out_data['scale'],
                                size=self._out_data['size'],

@@ -9,7 +9,7 @@ from stracking.io import write_tracks, write_particles
 
 
 class SExport(QWidget):
-    """Dock widget to read tracks
+    """Dock widget to export particles and tracks
 
     Parameters
     ----------
@@ -47,6 +47,13 @@ class SExport(QWidget):
         self._on_layer_change(None)
 
     def _on_layer_change(self, e):
+        """Update the plugin layers lists when napari layers are updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+        """
         # particles
         self._particles_layers.clear()
         for layer in self.viewer.layers:
@@ -59,6 +66,7 @@ class SExport(QWidget):
                 self._tracks_layers.addItem(layer.name)
 
     def _save_particles(self):
+        """Callback called when save particles button is clicked"""
         file = QFileDialog.getSaveFileName(self, 'Save File')
         if len(file) > 0:
             layer = self.viewer.layers[self._particles_layers.currentText()]
@@ -66,6 +74,7 @@ class SExport(QWidget):
             write_particles(file[0], particles)
 
     def _save_tracks(self):
+        """Callback called when save tracks button is clicked"""
         file = QFileDialog.getSaveFileName(self, 'Save File')
         if len(file) > 0:
             layer = self.viewer.layers[self._tracks_layers.currentText()]

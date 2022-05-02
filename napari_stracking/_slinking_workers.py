@@ -10,6 +10,7 @@ from stracking.containers import SParticles, STracks
 
 # ------------------- SLinkerNearestNeighbor -------
 class SLinkerNearestNeighborWidget(SNapariWidget):
+    """Widget for the linker nearest neighbor plugin"""
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -35,6 +36,7 @@ class SLinkerNearestNeighborWidget(SNapariWidget):
         self._init_layer_list()
 
     def init_layer_list(self):
+        """Initialize the layers lists"""
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.points.points.Points):
                 self._points_layer_box.addItem(layer.name)
@@ -44,6 +46,14 @@ class SLinkerNearestNeighborWidget(SNapariWidget):
             self.enable.emit(True)
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_points_text = self.points_layer_box.currentText()
         self.points_layer_box.clear()
         is_current_points_item_still_here = False
@@ -91,6 +101,7 @@ class SLinkerNearestNeighborWidget(SNapariWidget):
 
 
 class SLinkerNearestNeighborWorker(SNapariWorker):
+    """Worker for the linker nearest neighbor plugin"""
     def __init__(self, napari_viewer, widget):
         super().__init__(napari_viewer, widget)
 
@@ -161,6 +172,7 @@ class SLinkerShortestPathWidget(SNapariWidget):
         self.init_layer_list()
 
     def init_layer_list(self):
+        """Initialize the layers lists"""
         for layer in self.viewer.layers:
             if isinstance(layer, napari.layers.points.points.Points):
                 self._points_layer_box.addItem(layer.name)
@@ -170,6 +182,14 @@ class SLinkerShortestPathWidget(SNapariWidget):
             self.enable.emit(True)
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_points_text = self._points_layer_box.currentText()
         self._points_layer_box.clear()
         is_current_points_item_still_here = False

@@ -4,7 +4,7 @@ from ._sfeatures_workers import (STracksFeaturesWidget,
 
 
 class STracksFeatures(SNapariPlugin):
-    """ Calculate features of tracks
+    """Plugin to calculate tracks features
 
     Parameters
     ----------

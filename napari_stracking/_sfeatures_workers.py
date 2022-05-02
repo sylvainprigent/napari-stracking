@@ -13,6 +13,7 @@ from stracking.features import (LengthFeature, DistanceFeature,
 
 # ------------------ STracksFeaturesWidget --------
 class STracksFeaturesWidget(SNapariWidget):
+    """Widget for the tracks features plugins"""
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -98,9 +99,18 @@ class STracksFeaturesWidget(SNapariWidget):
         self.is_advanced = value
 
     def init_layer_list(self):
+        """Initialize the layers lists"""
         self._on_layer_change(None)
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_points_text = self._tracks_layer_box.currentText()
         self._tracks_layer_box.clear()
         is_current_points_item_still_here = False
@@ -119,13 +129,23 @@ class STracksFeaturesWidget(SNapariWidget):
             self.properties_btn.setEnabled(True)
 
     def _on_tracks_layer_change(self, text):
+        """Callback called when the combobox of tracks layer item is changed
+
+        Parameters
+        ----------
+        text: str
+            Current layer name
+
+        """
         self.features_viewer.layer_name = text
 
     def _on_show_features(self):
+        """Callback called when the 'show features' button is clicked"""
         self.features_viewer.reload()
         self.features_viewer.show()
 
     def _on_add(self):
+        """Callback called when the add feature button is clicked"""
         filter_ = self.filters_names.currentText()
         if filter_ == 'Length':
             self.pipeline_list_widget.add_widget('Length',
@@ -139,6 +159,7 @@ class STracksFeaturesWidget(SNapariWidget):
                                                  SDisplacementFeatureWidget())
 
     def show_features(self):
+        """Method to call to force the features table display"""
         self._on_show_features()
 
     def check_inputs(self):
@@ -166,48 +187,58 @@ class STracksFeaturesWidget(SNapariWidget):
 
 
 class SLengthFeatureWidget(QWidget):
+    """Widget for the length feature"""
     def __init__(self):
         super().__init__()
 
         layout = QGridLayout()
         self.setLayout(layout)
 
-    def check_inputs(self):
+    @staticmethod
+    def check_inputs():
         return True
 
+    @staticmethod
     def parameters(self):
         return {}
 
 
 class SDistanceFeatureWidget(QWidget):
+    """Widget for the distance feature"""
     def __init__(self):
         super().__init__()
 
         layout = QGridLayout()
         self.setLayout(layout)
 
+    @staticmethod
     def check_inputs(self):
         return True
 
+    @staticmethod
     def parameters(self):
         return {}
 
 
 class SDisplacementFeatureWidget(QWidget):
+    """Widget for the displacement feature"""
     def __init__(self):
         super().__init__()
 
         layout = QGridLayout()
         self.setLayout(layout)
 
+    @staticmethod
     def check_inputs(self):
         return True
 
+    @staticmethod
     def parameters(self):
         return {}
 
 
 class STracksFeaturesWorker(SNapariWorker):
+    """Worker fot the tracks features plugin"""
     def __init__(self, napari_viewer, widget):
         super().__init__(napari_viewer, widget)
 

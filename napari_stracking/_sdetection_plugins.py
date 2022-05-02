@@ -6,7 +6,7 @@ from ._sdetection_workers import (SDogWorker, SDogWidget,
 
 
 class SDetectorDog(SNapariPlugin):
-    """Dock widget for DoG detection
+    """Napari plugin for DoG detection
 
     Parameters
     ----------
@@ -26,7 +26,7 @@ class SDetectorDog(SNapariPlugin):
 
 
 class SDetectorDoh(SNapariPlugin):
-    """Dock widget for DoH detection
+    """Napari plugin for DoH detection
 
     Parameters
     ----------
@@ -46,7 +46,7 @@ class SDetectorDoh(SNapariPlugin):
 
 
 class SDetectorLog(SNapariPlugin):
-    """Dock widget for LoG detection
+    """Napari plugin for LoG detection
 
     Parameters
     ----------
@@ -66,7 +66,7 @@ class SDetectorLog(SNapariPlugin):
 
 
 class SDetectorSeg(SNapariPlugin):
-    """Dock widget for detection from segmentation map
+    """Napari plugin for detection from segmentation map
 
     Parameters
     ----------

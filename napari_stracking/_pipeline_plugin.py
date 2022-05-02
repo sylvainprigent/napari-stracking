@@ -10,6 +10,7 @@ from ._splugin import SProgressObserver, SLogWidget
 
 
 class SPipelineWorker(QObject):
+    """STracking worker to run a STracking pipeline (STrackingPipeline)"""
     finished = Signal()
     progress = Signal(int)
     log = Signal(str)
@@ -29,6 +30,11 @@ class SPipelineWorker(QObject):
         self.pipeline_file = pipeline_file
 
     def run(self):
+        """Execute the pipeline.
+
+        The pipeline run emit progress and finished signals
+
+        """
         self.progress.emit(0)
         pipeline = STrackingPipeline()
         pipeline.add_observer(self.observer)
@@ -91,9 +97,18 @@ class SPipeline(QWidget):
         self._on_layer_change(None)
 
     def init_layers_list(self):
+        """Initialize the plugin layer list when the plugin starts"""
         self._on_layer_change(None)
 
     def _on_layer_change(self, e):
+        """Update the plugin layers lists when napari layers are updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         # particles
         self._images_layers.clear()
         for layer in self.viewer.layers:
@@ -105,24 +120,52 @@ class SPipeline(QWidget):
             self.run_btn.setEnabled(True)
 
     def _browser_pipeline(self):
+        """Callback called when pipeline browse button is clicked
+
+        It opens a dialog windows to brows existing files
+
+        """
         file = QFileDialog.getOpenFileName(self, 'Pipeline File')
         if len(file) > 0:
             self._pipeline_edit.setText(file[0])
 
     def _run(self):
+        """Callback called when the run button is clicked
+
+        This method start the pipeline worker in a new thread
+        """
         if self.check_inputs():
             self.worker.set_inputs(self.viewer.layers[self._images_layers.currentText()].data,
                                    self._pipeline_edit.text())
             self.thread.start()
 
     def check_inputs(self):
+        """Check the plugin user inputs
+
+        This method must call the ``self.show_error(message)`` method when an incorect input is
+        detected
+
+        Return
+        ------
+        True id all the input are correct. False if at least one input is not correct
+
+        """
         pipeline_file = self._pipeline_edit.text()
         if not os.path.exists(pipeline_file):
             self._show_error("Cannot find the pipeline file")
             return False
         return True
 
-    def _show_error(self, message):
+    @staticmethod
+    def _show_error(message):
+        """Display an error message in a QMessageBox
+
+        Parameters
+        ----------
+        message: str
+            Error message to display in the message box
+
+        """
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Critical)
         msg.setText(message)
@@ -130,6 +173,7 @@ class SPipeline(QWidget):
         msg.exec_()
 
     def set_outputs(self):
+        """Set the plugin outputs to the napari viewer"""
         self.viewer.add_tracks(self.worker.tracks_.data,
                                name='S Pipeline',
                                scale=self.worker.tracks_.scale,

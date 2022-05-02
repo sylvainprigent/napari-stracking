@@ -106,9 +106,18 @@ class SSpotPropertiesWidget(SNapariWidget):
         self.properties_viewer.show()
 
     def init_layer_list(self):
+        """Initialize the layers lists"""
         self._on_layer_change(False)
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_points_text = self.points_layer_box.currentText()
         current_image_text = self.image_layer_box.currentText()
         self.points_layer_box.clear()

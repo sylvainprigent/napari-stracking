@@ -70,9 +70,18 @@ class STrackFilterWidget(SNapariWidget):
         self.is_advanced = value
 
     def init_layer_list(self):
+        """Initialize the layers lists"""
         self._on_layer_change(None)
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_tracks_text = self._tracks_layer_box.currentText()
         self._tracks_layer_box.clear()
         is_current_tracks_item_still_here = False

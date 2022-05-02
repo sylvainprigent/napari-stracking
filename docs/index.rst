@@ -15,6 +15,7 @@ Contents:
    quickstart
    guide
    help
+   developers
 
 
 Indices and tables
