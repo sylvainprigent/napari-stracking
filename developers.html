@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About &mdash; napari-stracking  documentation</title>
+  <title>Developers &mdash; napari-stracking  documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -16,11 +16,10 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
-    <link rel="author" title="About these documents" href="#" />
+    <link rel="author" title="About these documents" href="about.html" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Quick start" href="quickstart.html" />
-    <link rel="prev" title="Welcome to napari-stracking’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Getting Help" href="help.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,11 +38,20 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about.html">About</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick start</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="help.html">Getting Help</a></li>
-<li class="toctree-l1"><a class="reference internal" href="developers.html">Developers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Developers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#plugin-interface">Plugin Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plugins-for-import-and-export">Plugins for import and export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detection-plugins">Detection plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#properties-plugins">Properties plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linking-plugins">Linking plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#features-plugins">Features plugins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filters-plugins">Filters plugins</a></li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -60,9 +68,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>About</li>
+      <li>Developers</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="_sources/about.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/developers.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -70,18 +78,40 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="about">
-<h1>About<a class="headerlink" href="#about" title="Permalink to this headline"></a></h1>
-<p><cite>napari-stracking</cite> is a suite of <strong>Napari</strong> plugins for the <a class="reference external" href="https://sylvainprigent.github.io/stracking/">stracking library</a> dedicated to particles tracking in 2D+t and 3D+t images. Each step of
-the tracking process is separated in independent plugins to ease the creation of pipelines.</p>
+  <section id="developers">
+<h1>Developers<a class="headerlink" href="#developers" title="Permalink to this headline"></a></h1>
+<section id="plugin-interface">
+<h2>Plugin Interface<a class="headerlink" href="#plugin-interface" title="Permalink to this headline"></a></h2>
+<p>STracking napari plugins implements a dedicated plugin interface for a custom management of the
+progress bar, progress log and advanced mode. To implement a new STracking plugin, developers needs
+to implement a <code class="docutils literal notranslate"><span class="pre">SNapariPlugin</span></code> class with a dedicated <code class="docutils literal notranslate"><span class="pre">SNapariWidget</span></code> for the graphical
+interface and a <code class="docutils literal notranslate"><span class="pre">SNapariWorker</span></code> that link the plugin widget to the STracking class.</p>
+</section>
+<section id="plugins-for-import-and-export">
+<h2>Plugins for import and export<a class="headerlink" href="#plugins-for-import-and-export" title="Permalink to this headline"></a></h2>
+</section>
+<section id="detection-plugins">
+<h2>Detection plugins<a class="headerlink" href="#detection-plugins" title="Permalink to this headline"></a></h2>
+</section>
+<section id="properties-plugins">
+<h2>Properties plugins<a class="headerlink" href="#properties-plugins" title="Permalink to this headline"></a></h2>
+</section>
+<section id="linking-plugins">
+<h2>Linking plugins<a class="headerlink" href="#linking-plugins" title="Permalink to this headline"></a></h2>
+</section>
+<section id="features-plugins">
+<h2>Features plugins<a class="headerlink" href="#features-plugins" title="Permalink to this headline"></a></h2>
+</section>
+<section id="filters-plugins">
+<h2>Filters plugins<a class="headerlink" href="#filters-plugins" title="Permalink to this headline"></a></h2>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to napari-stracking’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="quickstart.html" class="btn btn-neutral float-right" title="Quick start" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="help.html" class="btn btn-neutral float-left" title="Getting Help" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
