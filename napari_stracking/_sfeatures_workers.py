@@ -283,6 +283,7 @@ class STracksFeaturesWorker(SNapariWorker):
         self.finished.emit()
 
     def set_outputs(self):
+        """Set the output features in a new napari layer"""
         # set the properties to the layer
         state = self.widget.state()
         input_tracks_layer_name = state['inputs']['tracks']

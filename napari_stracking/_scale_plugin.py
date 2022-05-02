@@ -5,7 +5,7 @@ import napari
 
 
 class SScale(QWidget):
-    """Dock widget for DoG detection
+    """Napari plugin to change a layer scale
 
     Parameters
     ----------
@@ -57,6 +57,7 @@ class SScale(QWidget):
         self._init_layer_list()
 
     def _init_layer_list(self):
+        """Initialize the layer list with all open compatible layers"""
         for layer in self.viewer.layers:
             self.layers_box.addItem(layer.name)
 
@@ -64,6 +65,14 @@ class SScale(QWidget):
         self._read_scale(self.layers_box.currentText())         
 
     def _on_layer_change(self, e):
+        """Callback called when a napari layer is updated
+
+        Parameters
+        ----------
+        e: QObject
+            Qt event
+
+        """
         current_text = self.layers_box.currentText()
         self.layers_box.clear()
         is_current_item_still_here = False
@@ -77,10 +86,19 @@ class SScale(QWidget):
         self._read_scale(self.layers_box.currentText())  
 
     def changed_layer(self, layer_name):
+        """Update the plugin widget when the selected layer has changed"""
         self._show_hide_boxes(layer_name) 
         self._read_scale(layer_name)  
 
     def _read_scale(self, layer_name):
+        """Read the scale of a layer
+
+        Parameters
+        ----------
+        layer_name: str
+            Name of the layer to process
+
+        """
         if layer_name in self.viewer.layers:
             current_layer = self.viewer.layers[layer_name]
             if len(current_layer.scale) == 2:
@@ -97,6 +115,14 @@ class SScale(QWidget):
                 self.x_res_box.setText(str(current_layer.scale[3])) 
 
     def _show_hide_boxes(self, layer_name):
+        """Method called to refresh the scale inputs when the layer is changed
+
+        Parameters
+        ----------
+        layer_name: str
+            Name of the layer to process
+
+        """
         if layer_name in self.viewer.layers:
             current_layer = self.viewer.layers[layer_name]
             if len(current_layer.scale) == 2:
@@ -116,6 +142,7 @@ class SScale(QWidget):
                 self.t_res_box.setVisible(True)         
 
     def update_scale(self):
+        """Update the scale in the napari layer"""
         current_layer = self.viewer.layers[self.layers_box.currentText()]
         if len(current_layer.scale) == 2:
             current_layer.scale = [float(self.y_res_box.text()), float(self.x_res_box.text())]

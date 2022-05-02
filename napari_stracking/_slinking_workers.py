@@ -131,6 +131,7 @@ class SLinkerNearestNeighborWorker(SNapariWorker):
         self.finished.emit()
 
     def set_outputs(self):
+        """Set the linker tracks to a new napari layer"""
         if len(self._out_data.data) == 0:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)
@@ -147,6 +148,7 @@ class SLinkerNearestNeighborWorker(SNapariWorker):
 
 # ------------------- SLinkerShortestPath ------------
 class SLinkerShortestPathWidget(SNapariWidget):
+    """Widget for the shortest path linker plugin"""
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -237,6 +239,7 @@ class SLinkerShortestPathWidget(SNapariWidget):
 
 
 class SLinkerShortestPathWorker(SNapariWorker):
+    """Worker for the shortest path linker plugin"""
     def __init__(self, napari_viewer, widget):
         super().__init__(napari_viewer, widget)
 
@@ -266,6 +269,7 @@ class SLinkerShortestPathWorker(SNapariWorker):
         self.finished.emit()
 
     def set_outputs(self):
+        """Set the calculated tracks to a new napari layer"""
         if len(self._out_data.data) == 0:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)

@@ -12,6 +12,7 @@ from stracking.properties import IntensityProperty
 
 # ------------- Spot properties -------------
 class SSpotPropertiesWidget(SNapariWidget):
+    """Widget for the particles properties plugin"""
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -99,9 +100,11 @@ class SSpotPropertiesWidget(SNapariWidget):
         self.is_advanced = value
 
     def show_properties(self):
+        """reload and display the particles properties in a popup window"""
         self._on_show_properties()
 
     def _on_show_properties(self):
+        """Callback called when the properties are calculate/updated"""
         self.properties_viewer.reload()
         self.properties_viewer.show()
 
@@ -146,12 +149,14 @@ class SSpotPropertiesWidget(SNapariWidget):
             self.properties_btn.setEnabled(True)
 
     def _on_add(self):
+        """Callback called when the property add button is clicked"""
         filter_ = self.filters_names.currentText()
         if filter_ == 'Intensity':
             self.pipeline_list_widget.add_widget('Intensity',
                                                  SIntensityPropertyWidget(self))
 
     def _on_point_layer_change(self, text):
+        """Callback called to catch the selection of a new input layer"""
         self.properties_viewer.layer_name = text
 
     def check_inputs(self):
@@ -180,6 +185,7 @@ class SSpotPropertiesWidget(SNapariWidget):
 
 
 class SIntensityPropertyWidget(QWidget):
+    """Widget for the intensity property inputs"""
     def __init__(self, parent_plugin):
         super().__init__()
         self.parent_plugin = parent_plugin
@@ -195,6 +201,12 @@ class SIntensityPropertyWidget(QWidget):
         layout.addWidget(self.radius_val, 1, 1)
 
     def check_inputs(self):
+        """Check the widget user inputs
+
+        Return
+        ------
+        True is the inputs are correct, False if at least one input is not correct
+        """
         try:
             _ = float(self.radius_val.text())
         except ValueError as err:
@@ -203,10 +215,17 @@ class SIntensityPropertyWidget(QWidget):
         return True
 
     def parameters(self):
+        """ Get the parameters values (state)
+
+        Return
+        ------
+        dict: a dictionary with the inputs values
+        """
         return {'radius': float(self.radius_val.text())}
 
 
 class SSpotPropertiesWorker(SNapariWorker):
+    """Worker fot the particles properties plugin"""
     def __init__(self, napari_viewer, widget):
         super().__init__(napari_viewer, widget)
 
@@ -247,7 +266,7 @@ class SSpotPropertiesWorker(SNapariWorker):
         self.finished.emit()
 
     def set_outputs(self):
-        # set the properties to the layer
+        """"set the calculated properties to a new napari layer"""
         state = self.widget.state()
         input_points_layer_name = state['inputs']['points']
         self.viewer.layers[input_points_layer_name].properties = self._out_data.properties

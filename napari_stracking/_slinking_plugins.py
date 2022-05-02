@@ -7,7 +7,7 @@ from ._slinking_workers import (SLinkerNearestNeighborWidget,
 
 
 class SLinkerNearestNeighbor(SNapariPlugin):
-    """Dock widget to link detections using the nearest neighbor algorithm
+    """Plugin to link detections using the nearest neighbor algorithm
 
     Parameters
     ----------
@@ -29,7 +29,7 @@ class SLinkerNearestNeighbor(SNapariPlugin):
 
 
 class SLinkerShortestPath(SNapariPlugin):
-    """Dock widget to calculate spot properties
+    """Plugin to link detections using the shortest path algorithm
 
     Parameters
     ----------

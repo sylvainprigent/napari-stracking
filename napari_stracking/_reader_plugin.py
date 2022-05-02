@@ -7,7 +7,7 @@ from stracking.io import read_tracks, read_particles
 
 
 class SLoad(QWidget):
-    """Dock widget to read tracks
+    """Plugin to read particles and tracks from files
 
     Parameters
     ----------
@@ -51,14 +51,17 @@ class SLoad(QWidget):
         self.setLayout(layout)
 
     def browse_particles(self):
+        """Callback called when the browse particles button is clicked"""
         file = QFileDialog.getOpenFileName(self, "open file", "", "")
         self.particles_file_edit.setText(file[0])
 
     def browse_tracks(self):
+        """Callback called when the browse tracks button is clicked"""
         file = QFileDialog.getOpenFileName(self, "open file", "", "")
         self.tracks_file_edit.setText(file[0])
 
     def load_tracks(self):
+        """Method that implements the tracks loading"""
         tracks = read_tracks(self.tracks_file_edit.text())
         self.viewer.add_tracks(tracks.data,
                                metadata=tracks.features,
@@ -69,6 +72,7 @@ class SLoad(QWidget):
                                )
 
     def load_particles(self):
+        """Method that implements the particles loading"""
         particles = read_particles(self.particles_file_edit.text())
         self.viewer.add_points(data=particles.data,
                                properties=particles.properties,

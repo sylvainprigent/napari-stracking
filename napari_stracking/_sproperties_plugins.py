@@ -4,7 +4,7 @@ from ._sproperties_workers import (SSpotPropertiesWidget,
 
 
 class SParticlesProperties(SNapariPlugin):
-    """Dock widget to calculate spot properties
+    """Plugin to calculate particles properties
 
     Parameters
     ----------

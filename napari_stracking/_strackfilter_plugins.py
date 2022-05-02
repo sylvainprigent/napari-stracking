@@ -5,7 +5,7 @@ from ._strackfilter_workers import (STrackFilterWidget,
 
 
 class SFilterTrack(SNapariPlugin):
-    """Dock widget to link detections using the nearest neighbor algorithm
+    """Dock widget to filter tracks
 
     Parameters
     ----------

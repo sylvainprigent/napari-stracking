@@ -8,6 +8,14 @@ from qtpy.QtCore import Signal
 
 
 class SPropertiesViewer(QWidget):
+    """Widget to display a the particles properties table
+
+    Parameters
+    ----------
+    napari_viewer: QWidget
+        The napari viewer
+
+    """
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -22,6 +30,7 @@ class SPropertiesViewer(QWidget):
         self.setLayout(layout)
 
     def reload(self):
+        """Reload the particles properties from the layers to the table widget"""
         particles = self.viewer.layers[self.layer_name].data
         print(particles)
         properties = self.viewer.layers[self.layer_name].properties
@@ -73,6 +82,14 @@ class SPropertiesViewer(QWidget):
 
 
 class SFeaturesViewer(QWidget):
+    """Widget to display a the tracks features table
+
+    Parameters
+    ----------
+    napari_viewer: QWidget
+        The napari viewer
+
+    """
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -87,6 +104,7 @@ class SFeaturesViewer(QWidget):
         self.setLayout(layout)
 
     def reload(self):
+        """Reload the tracks features from the layers to the table widget"""
         particles = self.viewer.layers[self.layer_name].data
         features = self.viewer.layers[self.layer_name].metadata
         headers = ['track_id']
@@ -163,13 +181,21 @@ class SProcessInListWidget(QWidget):
         self.setLayout(layout)
 
     def _on_remove(self):
+        """Callback called when close button is clicked"""
         self.remove.emit(str(self.uuid))
 
     def check_inputs(self):
+        """Check the widget inputs
+
+        Returns
+        -------
+        True if all the widget inputs are correct, False otherwise
+        """
         return self.process_widget.check_inputs()
 
 
 class SPipelineListWidget(QWidget):
+    """Widget that contains a list of widgets to build a pipeline"""
     def __init__(self):
         super().__init__()
         self.input_layer_name = ''
@@ -191,6 +217,7 @@ class SPipelineListWidget(QWidget):
         list_widget.setLayout(self.layout)
 
     def add_widget(self, name, widget):
+        """add a widget to the pipeline"""
         self._count += 1
         widget_ = SProcessInListWidget(str(self._count), name, widget)
         widget_.remove.connect(self._on_remove_widget)
@@ -217,6 +244,7 @@ class SPipelineListWidget(QWidget):
                         break
 
     def widgets(self):
+        """Returns all the widgets in the pipeline"""
         widgets_ = list()
         for i in range(self.layout.count()):
             item = self.layout.itemAt(i)

@@ -11,6 +11,7 @@ from stracking.filters import FeatureFilter
 
 # ------------- Spot properties -------------
 class STrackFilterWidget(SNapariWidget):
+    """Widget for the tracks filter plugin"""
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
@@ -98,6 +99,7 @@ class STrackFilterWidget(SNapariWidget):
             self.enable.emit(True)
 
     def _on_add(self):
+        """callback called when add filter button is clicked"""
         filter_ = self.filters_names.currentText()
         current_layer = self._tracks_layer_box.currentText()
         if filter_ == 'Features':
@@ -131,6 +133,7 @@ class STrackFilterWidget(SNapariWidget):
 
 
 class SFeatureFilterWidget(QWidget):
+    """Widget for the features filter plugin"""
     def __init__(self, napari_viewer, layer_name, parent_plugin):
         super().__init__()
         self.viewer = napari_viewer
@@ -178,6 +181,7 @@ class SFeatureFilterWidget(QWidget):
 
 
 class STrackFilterWorker(SNapariWorker):
+    """Worker for the track filter plugin"""
     def __init__(self, napari_viewer, widget):
         super().__init__(napari_viewer, widget)
 
@@ -223,6 +227,7 @@ class STrackFilterWorker(SNapariWorker):
         self.finished.emit()
 
     def set_outputs(self):
+        """Set the plugin output to a napari layer"""
         if len(self._out_data.data) == 0:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Information)

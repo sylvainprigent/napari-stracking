@@ -228,10 +228,10 @@ class SLogWidget(QWidget):
 
 
 class SProgressObserver(QObject):
+    """Implement the STRacking observer design pattern to display STracking tools progress"""
     progress_signal = Signal(int)
     notify_signal = Signal(str)
 
-    """Implement the STRacking observer design pattern to display STracking tools progress"""
     def __init__(self):
         super().__init__()
 
