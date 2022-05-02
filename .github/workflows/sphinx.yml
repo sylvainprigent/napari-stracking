@@ -17,7 +17,7 @@ jobs:
   release_sphinx:
     runs-on: ubuntu-latest
     container:
-      image: python:3.6
+      image: python:3.9
     steps:
 
       # check out sources that will be used for autodocs, plus readme
