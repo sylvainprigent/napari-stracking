@@ -37,7 +37,7 @@ jobs:
       # to my conf.py extensions list. that fixes the broken uploads
       - name: Building documentation
         run: |
-          pip install cython numpy scikit-image scipy qtpy pyqt5 napari-plugin-engine
+          pip install cython numpy scikit-image scipy napari magicgui pytest-qt qtpy pyqt5 napari-plugin-engine
           pip install sphinx sphinx_rtd_theme
           cd docs
           make html
