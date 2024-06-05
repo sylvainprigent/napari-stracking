@@ -5,7 +5,6 @@ from qtpy.QtWidgets import (QWidget, QGridLayout, QLabel,
                             QFileDialog)
 from stracking.io import read_tracks, read_particles
 
-
 class SLoad(QWidget):
     """Plugin to read particles and tracks from files
 
