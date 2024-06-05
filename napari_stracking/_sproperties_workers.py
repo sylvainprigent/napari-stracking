@@ -17,7 +17,10 @@ class SSpotPropertiesWidget(SNapariWidget):
         super().__init__()
         self.viewer = napari_viewer
 
-        napari_viewer.events.layers_change.connect(self._on_layer_change)
+        napari_viewer.layers.events.inserted.connect(self._on_layer_change)
+        napari_viewer.layers.events.removed.connect(self._on_layer_change)
+        napari_viewer.layers.events.changed.connect(self._on_layer_change)
+        #napari_viewer.events.layers_change.connect(self._on_layer_change)
 
         # viewers
         self.properties_viewer = SPropertiesViewer(napari_viewer)

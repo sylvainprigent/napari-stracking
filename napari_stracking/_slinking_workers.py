@@ -15,7 +15,10 @@ class SLinkerNearestNeighborWidget(SNapariWidget):
         super().__init__()
         self.viewer = napari_viewer
 
-        napari_viewer.events.layers_change.connect(self._on_layer_change)
+        napari_viewer.layers.events.inserted.connect(self._on_layer_change)
+        napari_viewer.layers.events.removed.connect(self._on_layer_change)
+        napari_viewer.layers.events.changed.connect(self._on_layer_change)
+        #napari_viewer.events.layers_change.connect(self._on_layer_change)
 
         self._points_layer_box = QComboBox()
 
@@ -153,7 +156,10 @@ class SLinkerShortestPathWidget(SNapariWidget):
         super().__init__()
         self.viewer = napari_viewer
 
-        napari_viewer.events.layers_change.connect(self._on_layer_change)
+        napari_viewer.layers.events.inserted.connect(self._on_layer_change)
+        napari_viewer.layers.events.removed.connect(self._on_layer_change)
+        napari_viewer.layers.events.changed.connect(self._on_layer_change)
+        #napari_viewer.events.layers_change.connect(self._on_layer_change)
 
         self._points_layer_box = QComboBox()
 
